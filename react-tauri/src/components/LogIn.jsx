@@ -1,21 +1,42 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { invoke } from "@tauri-apps/api/core";
 
 export default function LogIn() {
+  const navigate = useNavigate();
+  const [credentials, setCredentials] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
     if (!username.trim() || !password) {
       setMessage("Please enter both username and password.");
       return;
     }
 
-    if (username === "1" && password === "1") {
-      setMessage("Log-In successful");
-    } else {
-      setMessage("Invalid username or password");
+    try {
+      const credentialsJSON = await invoke("get_credentials");
+      const credentials = JSON.parse(credentialsJSON);
+      const accounts = credentials.users;
+      const matchingUser  = accounts.find(
+        (account) =>
+          account.username === username &&
+          account.password === password
+      );
+
+      if (matchingUser) {
+        setMessage("Log-In successful");
+        navigate("/Vault");
+      } else {
+        setMessage("Invalid username or password");
+      }
+
+    } catch (error) {
+      setMessage("Could not load credentials");
+      console.error("ERROR:", error);
     }
   };
 
