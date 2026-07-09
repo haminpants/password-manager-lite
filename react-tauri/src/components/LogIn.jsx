@@ -2,32 +2,35 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
 
-export default function LogIn() {
+//TODO: Optional: Logic for adding new accounts (We can stick to only one account for now)
+
+
+export default function LogIn({ setProfile }) {
   const navigate = useNavigate();
-  const [credentials, setCredentials] = useState(null);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [profileName, setProfileName] = useState("");
+  const [profilePassword, setProfilePassword] = useState("");
   const [message, setMessage] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!username.trim() || !password) {
+    if (!profileName.trim() || !profilePassword) {
       setMessage("Please enter both username and password.");
       return;
     }
 
     try {
-      const credentialsJSON = await invoke("get_credentials");
-      const credentials = JSON.parse(credentialsJSON);
-      const accounts = credentials.users;
-      const matchingUser  = accounts.find(
-        (account) =>
-          account.username === username &&
-          account.password === password
+      const vaultJSON = await invoke("get_credentials");
+      const vault = JSON.parse(vaultJSON);
+      const profiles = vault.profiles;
+      const matchingProfile  = profiles.find(
+        (profile) =>
+          profile.username === profileName &&
+          profile.password === profilePassword
       );
 
-      if (matchingUser) {
+      if (matchingProfile) {
+        setProfile(matchingProfile);
         setMessage("Log-In successful");
         navigate("/Vault");
       } else {
@@ -36,7 +39,6 @@ export default function LogIn() {
 
     } catch (error) {
       setMessage("Could not load credentials");
-      console.error("ERROR:", error);
     }
   };
 
@@ -49,8 +51,8 @@ export default function LogIn() {
           id="username"
           name="username"
           type="text"
-          value={username}
-          onChange={(event) => setUsername(event.target.value)}
+          value={profileName}
+          onChange={(event) => setProfileName(event.target.value)}
           placeholder="Enter username"
           autoComplete="username"
 
@@ -61,8 +63,8 @@ export default function LogIn() {
           id="password"
           name="password"
           type="password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
+          value={profilePassword}
+          onChange={(event) => setProfilePassword(event.target.value)}
           placeholder="Enter password"
           autoComplete="current-password"
         />

@@ -6,11 +6,12 @@ import LogIn from "./components/LogIn";
 import Vault from "./components/Vault";
 
 function App() {
+  const [profile, setProfile] = useState(null);
   return (
     <main>
       <Routes>
-        <Route path="/" element={<LogIn/>} />
-        <Route path="/" element={<Vault/>} />
+        <Route path="/" element={<LogIn setProfile={setProfile} />} />
+        <Route path="/Vault" element={<Vault profile={profile} />} />
       </Routes>
     </main>
   );

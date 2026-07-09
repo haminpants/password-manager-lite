@@ -1,12 +1,25 @@
 {
-  "users": [
+  "profiles": [
     {
       "username": "1",
-      "password": "1"
-    },
-    {
-      "username": "2",
-      "password": "1"
+      "password": "1",
+      "entries": [
+        {
+          "app": "GitHub",
+          "username": "john-personal",
+          "password": "abc123"
+        },
+        {
+          "app": "GitHub",
+          "username": "john-work",
+          "password": "xyz789"
+        },
+        {
+          "app": "Discord",
+          "username": "john123",
+          "password": "password"
+        }
+      ]
     }
   ]
 }
