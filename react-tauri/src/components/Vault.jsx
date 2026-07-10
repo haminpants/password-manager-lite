@@ -23,7 +23,8 @@ export default function Vault({ profile }) {
 
   const {
     entries,
-    loading
+    loading,
+    deleteEntry
   } = useVault(profile);
 
   if (loading) {
@@ -36,11 +37,11 @@ export default function Vault({ profile }) {
         <button onClick={() => navigate("/Vault/AddEntry")}>
           Add Entry
         </button>
-
           {entries.map((entry) => (
-            <VaultItem 
+            <VaultItem
               key={entry.id}
               entry={entry}
+              onDelete={deleteEntry}
             />
           ))}
       </div>

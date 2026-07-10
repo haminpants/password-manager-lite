@@ -40,6 +40,15 @@ export default function useVault(profile) {
       await loadEntries();
   }
 
+  async function deleteEntry(entryId) {
+    await invoke("delete_entry", {
+      profileUsername: profile.username,
+      entryId
+    });
+
+    await loadEntries();
+  }
+
   useEffect(() => {
     if (profile) {
       loadEntries();
@@ -50,6 +59,7 @@ export default function useVault(profile) {
     entries,
     loading,
     loadEntries,
-    addEntry
+    addEntry,
+    deleteEntry
   };
 }

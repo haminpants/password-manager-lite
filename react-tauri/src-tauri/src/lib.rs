@@ -46,13 +46,9 @@ fn get_credentials(app: tauri::AppHandle) -> Result<String, String> {
 }
 
 #[tauri::command]
-fn add_entry( app: tauri::AppHandle, profile_username: String, entry: Entry) -> Result<(), String> {
+fn add_entry(app: tauri::AppHandle, profile_username: String, entry: Entry) -> Result<(), String> {
 
-    let path = get_vault_path(&app)?;
-    let data = fs::read_to_string(&path)
-        .map_err(|error| error.to_string())?;
-    let mut vault: Vault = serde_json::from_str(&data)
-        .map_err(|error| error.to_string())?;
+    let mut vault = load_vault(&app)?;
     let profile = vault.profiles
         .iter_mut()
         .find(|profile| profile.username == profile_username);
@@ -67,9 +63,46 @@ fn add_entry( app: tauri::AppHandle, profile_username: String, entry: Entry) -> 
         }
     }
 
-    let updated_json = serde_json::to_string_pretty(&vault)
+    save_vault(&app, &vault)?;
+    Ok(())
+}
+
+#[tauri::command]
+fn delete_entry(app: tauri::AppHandle, profile_username: String, entry_id: u64) -> Result<(), String> {
+    let mut vault = load_vault(&app)?;
+    let profile = vault.profiles
+        .iter_mut()
+        .find(|profile| profile.username == profile_username);
+
+    match profile {
+        Some(profile) => {
+            profile.entries.retain(|entry| entry.id != entry_id);
+        }
+
+        None => {
+            return Err("Profile not found".to_string());
+        }
+    }
+
+    save_vault(&app, &vault)?;
+    Ok(())
+}
+
+fn load_vault(app: &tauri::AppHandle) -> Result<Vault, String> {
+    let path = get_vault_path(app)?;
+    let data = fs::read_to_string(&path)
         .map_err(|error| error.to_string())?;
-    fs::write(path, updated_json)
+    let vault: Vault = serde_json::from_str(&data)
+        .map_err(|error| error.to_string())?;
+
+    Ok(vault)
+}
+
+fn save_vault(app: &tauri::AppHandle, vault: &Vault) -> Result<(), String> {
+    let path = get_vault_path(app)?;
+    let json = serde_json::to_string_pretty(vault)
+        .map_err(|error| error.to_string())?;
+    fs::write(path, json)
         .map_err(|error| error.to_string())?;
 
     Ok(())
@@ -127,7 +160,8 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             get_credentials,
-            add_entry
+            add_entry,
+            delete_entry
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
