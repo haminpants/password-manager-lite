@@ -19,6 +19,10 @@ export default function useVault(profile) {
 
       setEntries(currentProfile.entries);
 
+      console.log("Vault:", vault);
+      console.log("Logged in profile:", profile);
+      console.log("Found profile:", currentProfile);
+
     } catch(error) {
       console.error("Could not load entries:", error);
     } finally {

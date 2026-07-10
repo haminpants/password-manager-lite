@@ -20,14 +20,28 @@ export default function LogIn({ setProfile }) {
     }
 
     try {
+      console.log("1. Calling Rust get_credentials...");
+
       const vaultJSON = await invoke("get_credentials");
+
+      console.log("2. Raw vault JSON:");
+      console.log(vaultJSON);
+
       const vault = JSON.parse(vaultJSON);
       const profiles = vault.profiles;
+
+      console.log("3. Parsed vault:");
+      console.log(vault);
+
+
       const matchingProfile  = profiles.find(
         (profile) =>
           profile.username === profileName &&
           profile.password === profilePassword
       );
+
+      console.log("5. Matching profile:");
+      console.log(matchingProfile);
 
       if (matchingProfile) {
         setProfile(matchingProfile);

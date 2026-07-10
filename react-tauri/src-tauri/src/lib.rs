@@ -25,21 +25,31 @@ struct Entry {
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
-fn get_credentials() -> Result<String, String> {
+fn get_credentials(app: tauri::AppHandle) -> Result<String, String> {
 
-    let data = fs::read_to_string("vault.json")
-        .map_err(|error| error.to_string())?;
+    println!("1. get_credentials called");
 
-    let vault: Vault = serde_json::from_str(&data)
-        .map_err(|error| error.to_string())?;
+    let path = get_vault_path(&app)?;
+
+    println!("2. Vault path: {:?}", path);
+    
+    let data = fs::read_to_string(path)
+        .map_err(|error| {
+            println!("Read error: {}", error);
+            error.to_string()
+        })?;
+
+    println!("4. File contents:");
+    println!("{}", data);
 
     Ok(data)
 }
 
 #[tauri::command]
-fn add_entry(profile_username: String, entry: Entry) -> Result<(), String> {
+fn add_entry( app: tauri::AppHandle, profile_username: String, entry: Entry) -> Result<(), String> {
 
-    let data = fs::read_to_string("vault.json")
+    let path = get_vault_path(&app)?;
+    let data = fs::read_to_string(&path)
         .map_err(|error| error.to_string())?;
     let mut vault: Vault = serde_json::from_str(&data)
         .map_err(|error| error.to_string())?;
@@ -59,8 +69,50 @@ fn add_entry(profile_username: String, entry: Entry) -> Result<(), String> {
 
     let updated_json = serde_json::to_string_pretty(&vault)
         .map_err(|error| error.to_string())?;
-    fs::write("vault.json", updated_json)
+    fs::write(path, updated_json)
         .map_err(|error| error.to_string())?;
+
+    Ok(())
+}
+
+fn get_vault_path(app: &tauri::AppHandle) -> Result<std::path::PathBuf, String> {
+    let path = app
+        .path()
+        .app_data_dir()
+        .map_err(|error| error.to_string())?
+        .join("vault.json");
+
+    println!("Vault path: {:?}", path);
+
+    Ok(path)
+}
+
+fn initialize_vault(app: &tauri::AppHandle) -> Result<(), String> {
+    let path = get_vault_path(app)?;
+
+    if !path.exists() {
+        println!("Creating vault at: {:?}", path);
+        let default_vault = Vault {
+            profiles: vec![
+                Profile {
+                    username: "1".to_string(),
+                    password: "1".to_string(),
+                    entries: vec![],
+                }
+            ],
+        };
+
+        let json = serde_json::to_string_pretty(&default_vault)
+            .map_err(|error| error.to_string())?;
+
+        fs::create_dir_all(
+            path.parent().unwrap()
+        )
+        .map_err(|error| error.to_string())?;
+
+        fs::write(path, json)
+            .map_err(|error| error.to_string())?;
+    }
 
     Ok(())
 }
@@ -69,6 +121,10 @@ fn add_entry(profile_username: String, entry: Entry) -> Result<(), String> {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .setup(|app| {
+            initialize_vault(&app.handle())?;
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             get_credentials,
             add_entry
@@ -76,5 +132,3 @@ pub fn run() {
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
-
-
