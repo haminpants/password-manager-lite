@@ -15,7 +15,7 @@ export default function LogIn({ setProfile }) {
     event.preventDefault();
 
     if (!profileName.trim() || !profilePassword) {
-      setMessage("Please enter both username and password.");
+      setMessage("Please enter both username and password.\nusername:1\npassword:1");
       return;
     }
 
@@ -57,11 +57,18 @@ export default function LogIn({ setProfile }) {
   };
 
   return (
-    <div>
-      <h1 className="text-sky-300">Log In</h1>
-      <form onSubmit={handleSubmit}>
+    <div className="flex flex-col justify-center items-center h-screen gap-12">
+
+      <h1 className="text-sky-300 text-4xl">
+        Log-In
+      </h1>
+
+      <form className="flex flex-col gap-2" 
+        onSubmit={handleSubmit}>
+
         <label htmlFor="username">Username</label>
         <input
+          className="border border-black px-1"
           id="username"
           name="username"
           type="text"
@@ -74,6 +81,7 @@ export default function LogIn({ setProfile }) {
 
         <label htmlFor="password">Password</label>
         <input
+          className="border border-black px-1"
           id="password"
           name="password"
           type="password"
@@ -83,9 +91,12 @@ export default function LogIn({ setProfile }) {
           autoComplete="current-password"
         />
 
-        <button type="submit">Log In</button>
+        <button className="mt-3 text-sky-300 hover:text-sky-700"
+           type="submit">Log In</button>
       </form>
-      {message && <p>{message}</p>}
+      <p className="whitespace-pre-line text-center">
+        {message}
+      </p>
     </div>
   );
 }

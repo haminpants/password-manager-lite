@@ -31,10 +31,13 @@ export default function Vault({ profile }) {
     return <p>Loading...</p>;
   }    
     return (
-      <div>
-        <h1>Vault</h1>
+      <div className="flex flex-col justify-center items-center h-screen gap-12">
+        <h1 className="text-sky-300 text-4xl">
+          Vault
+        </h1>
 
-        <button onClick={() => navigate("/Vault/AddEntry")}>
+        <button className="border p-1 rounded-sm"
+          onClick={() => navigate("/Vault/AddEntry")}>
           Add Entry
         </button>
           {entries.map((entry) => (
