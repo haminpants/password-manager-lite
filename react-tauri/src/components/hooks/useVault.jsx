@@ -2,67 +2,39 @@ import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 
 
-export default function useVault() {
+export default function useVault(profile) {
 
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
 
 
-  async function loadVault() {
+  async function loadEntries() {
     try {
-      const vaultJSON = await invoke("get_vault");
+      const vaultJSON = await invoke("get_credentials");
       const vault = JSON.parse(vaultJSON);
-      const profile = vault.profiles[0];
+      const currentProfile = vault.profiles.find(
+        (storedProfile) =>
+          storedProfile.username === profile.username
+      );
 
-      setEntries(profile.entries);
+      setEntries(currentProfile.entries);
 
-    } catch (error) {
-      console.error("Could not load vault:", error);
+    } catch(error) {
+      console.error("Could not load entries:", error);
     } finally {
       setLoading(false);
     }
   }
 
-
-  async function addEntry(entry) {
-
-    try {
-      await invoke("add_entry", {
-        entry: JSON.stringify(entry)
-      });
-
-      await loadVault();
-
-    } catch (error) {
-      console.error("Could not add entry:", error);
-    }
-  }
-
-
-  async function deleteEntry(id) {
-
-    try {
-      await invoke("delete_entry", {
-        id
-      });
-
-      await loadVault();
-
-    } catch (error) {
-      console.error("Could not delete entry:", error);
-    }
-  }
-
-
   useEffect(() => {
-    loadVault();
-  }, []);
-
+    if (profile) {
+      loadEntries();
+    }
+  }, [profile]);
 
   return {
     entries,
     loading,
-    addEntry,
-    deleteEntry
+    loadEntries
   };
 }
