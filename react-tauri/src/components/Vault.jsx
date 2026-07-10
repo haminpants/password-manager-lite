@@ -15,6 +15,8 @@ import VaultItem from "./VaultItem";
 
 export default function Vault({ profile }) {
 
+  const navigate = useNavigate();
+
   if (!profile) {
     return <p>No profile loaded</p>;
   }
@@ -30,9 +32,14 @@ export default function Vault({ profile }) {
     return (
       <div>
         <h1>Vault</h1>
+
+        <button onClick={() => navigate("/Vault/AddEntry")}>
+          Add Entry
+        </button>
+
           {entries.map((entry) => (
             <VaultItem 
-              key={entry.app}
+              key={entry.id}
               entry={entry}
             />
           ))}

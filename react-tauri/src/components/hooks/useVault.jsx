@@ -26,6 +26,16 @@ export default function useVault(profile) {
     }
   }
 
+  async function addEntry(entry) {
+
+      await invoke("add_entry", {
+          profileUsername: profile.username,
+          entry: JSON.stringify(entry)
+      });
+
+      await loadEntries();
+  }
+
   useEffect(() => {
     if (profile) {
       loadEntries();
@@ -35,6 +45,7 @@ export default function useVault(profile) {
   return {
     entries,
     loading,
-    loadEntries
+    loadEntries,
+    addEntry
   };
 }

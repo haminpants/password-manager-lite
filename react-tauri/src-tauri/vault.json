@@ -5,19 +5,34 @@
       "password": "1",
       "entries": [
         {
+          "id": 1,
           "app": "GitHub",
           "username": "john-personal",
           "password": "abc123"
         },
         {
+          "id": 2,
           "app": "GitHub",
           "username": "john-work",
           "password": "xyz789"
         },
         {
+          "id": 3,
           "app": "Discord",
           "username": "john123",
           "password": "password"
+        },
+        {
+          "id": 1783653332194,
+          "app": "Test",
+          "username": "test",
+          "password": "test"
+        },
+        {
+          "id": 1783653385454,
+          "app": "2",
+          "username": "2",
+          "password": "2"
         }
       ]
     }
