@@ -60,7 +60,7 @@ export default function LogIn({ setProfile }) {
     <div className="flex flex-col justify-center items-center h-screen gap-12">
 
       <h1 className="text-sky-300 text-4xl">
-        Log-In
+        Password Manager
       </h1>
 
       <form className="flex flex-col gap-2" 
@@ -68,7 +68,7 @@ export default function LogIn({ setProfile }) {
 
         <label htmlFor="username">Username</label>
         <input
-          className="border border-black px-1"
+          className="border border-grey px-1"
           id="username"
           name="username"
           type="text"
@@ -81,7 +81,7 @@ export default function LogIn({ setProfile }) {
 
         <label htmlFor="password">Password</label>
         <input
-          className="border border-black px-1"
+          className="border border-grey px-1"
           id="password"
           name="password"
           type="password"

@@ -1,1 +1,21 @@
 @import "tailwindcss";
+
+:root {
+    --bg: hsl(251, 30%, 11%);
+    --bg-dark:   hsl(253, 70%, 5%);
+    --text: hsl(258, 27%, 82%);
+    --text-muted: hsl(258, 27%, 60%);
+    --primary: hsl(270, 43%, 24%);
+    --secondary: hsl(225, 82%, 36%);
+
+}
+
+.dark {
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+
+}
+

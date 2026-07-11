@@ -38,41 +38,48 @@ export default function AddEntry({ profile }) {
 
 
   return (
-    <div>
-      <h1>Add Entry</h1>
+    <div className="flex flex-col justify-center items-center h-screen gap-12">
 
-      <form onSubmit={handleSubmit}>
+      <h1 className="text-sky-300 text-4xl"
+        >Add Entry</h1>
 
-        <label>
-          App
-        </label>
-        <input
-          value={app}
-          onChange={(e) => setApp(e.target.value)}
-        />
+      <form className="flex flex-col gap-2" 
+        onSubmit={handleSubmit}>
 
-
-        <label>
-          Username
-        </label>
-        <input
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
+          <label>
+            App
+          </label>
+          <input
+            className="border border-grey px-1"
+            value={app}
+            onChange={(e) => setApp(e.target.value)}
+          />
 
 
-        <label>
-          Password
-        </label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          <label>
+            Username
+          </label>
+          <input
+            className="border border-grey px-1" 
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
 
 
-        <button type="submit">
-          Save
+          <label>
+            Password
+          </label>
+          <input
+            className="border border-grey px-1"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+        <button 
+          className="mt-3 text-sky-300 hover:text-sky-700"
+          type="submit">
+            Save
         </button>
 
       </form>

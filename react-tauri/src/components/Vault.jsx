@@ -5,9 +5,11 @@ import useVault from "./hooks/useVault";
 import VaultItem from "./VaultItem";
 
 
-// TODO: Add vaultItem
 // TODO: Display vaultItem with endless scroll
-// TODO: JSON must have unique key
+// TODO: Add back button
+// TODO: Edit entry
+// TODO: Copy Password and Copy Username
+// TODO: Reformat 
 // TODO: Optional
 // TODO: Optional: Sort vaultItem
 // TODO: Optional: Show date
