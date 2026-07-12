@@ -9,7 +9,7 @@ import AddEntry from "./components/AddEntry";
 function App() {
   const [profile, setProfile] = useState(null);
   return (
-    <main>
+    <main className="w-full max-w-5xl">
       <Routes>
         <Route path="/" element={<LogIn setProfile={setProfile} />} />
         <Route path="/Vault" element={<Vault profile={profile} />} />

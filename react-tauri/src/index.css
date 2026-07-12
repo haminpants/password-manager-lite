@@ -5,17 +5,24 @@
     --bg-dark:   hsl(253, 70%, 5%);
     --text: hsl(258, 27%, 82%);
     --text-muted: hsl(258, 27%, 60%);
-    --primary: hsl(270, 43%, 24%);
+    --primary: hsl(197, 100%, 66%);
     --secondary: hsl(225, 82%, 36%);
+    --max-width: 64rem
 
 }
 
 .dark {
 }
 
+#root {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
 body {
     background: var(--bg);
     color: var(--text);
-
 }
 

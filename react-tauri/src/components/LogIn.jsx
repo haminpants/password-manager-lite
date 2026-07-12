@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
 
-//TODO: Optional: Logic for adding new accounts (We can stick to only one account for now)
+//TODO: Add logic for adding new accounts
 
 
 export default function LogIn({ setProfile }) {
