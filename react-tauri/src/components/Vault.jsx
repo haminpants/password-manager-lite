@@ -7,13 +7,10 @@ import ContextMenu from "./ContextMenu";
 
 
 
-// TODO: Context Menu styling
-// TODO: Card styling apply 
-// TODO: Heirarchy Colour Vault Item
+// TODO: light mode
 // TODO: Login the see password icon is black (bad contrast)
 // TODO: Prevent user inputing empty passwords and username
-// TODO: light mode
-// TODO: Edit entry
+// TODO: Allow users to edit entries/vault items
 // TODO: Copy Password and Copy Username
 // TODO: Optional
 // TODO: Optional: Sort vaultItem
@@ -46,16 +43,16 @@ export default function Vault({ profile, entry, position}) {
   }    
 
 
-function handleContextMenu(event, entryID, position) {
-  event.preventDefault();
-  setMenu({
-    visible: true,
-    x: position?.x ?? event.clientX,
-    y: position?.y ?? event.clientY,
-    entryID: entryID,
+  function handleContextMenu(event, entryID, position) {
+    event.preventDefault();
+    setMenu({
+      visible: true,
+      x: position?.x ?? event.clientX,
+      y: position?.y ?? event.clientY,
+      entryID: entryID,
 
-  });
-}
+    });
+  }
 
   function closeMenu() {
     setMenu({
@@ -72,22 +69,31 @@ function handleContextMenu(event, entryID, position) {
   }
 
     return (
-      <div className="flex flex-col justify-start items-center h-screen gap-3 mt-24">
-        <h1 className="text-sky-300 text-4xl">
+      <div className="flex flex-col justify-start h-screen gap-3 mt-24">
+        <h1 className="text-sky-300 text-4xl justify-center text-center">
           Vault
         </h1>
 
         <div className="flex w-full justify-between mt-6">
-          <button className="border p-1 rounded-sm"
+          <button className=" border-b pt-3  hover:border-(--secondary) hover:text-(--primary)"
             onClick={() => navigate("/")}>
             Back
           </button>
 
-          <button className="border p-1 rounded-sm"
+          <button className=" border border-(--text-muted) border-b-4 border-b-(--highlight)  p-3 rounded-sm hover:border-(--secondary) hover:text-(--primary)"
             onClick={() => navigate("/Vault/AddEntry")}>
             Add Entry
           </button>
         </div>
+
+        <div className="flex flex-row text-left gap-2 justify-start text-1xl text-(--text-more-muted) mt-5">
+          <div className= "flex w-50 ml-16"><h3>App</h3></div>
+          <div className="flex flex-1"><h3>username/password</h3></div>
+        </div>
+
+
+        {/*An app  with a really long name could spill to the username password. 
+        Also because vault item is a separate component instead of a table, I can't make it responsive unless I do a redesign of this */}
 
           {entries.map((entry) => (
             <VaultItem
@@ -104,7 +110,7 @@ function handleContextMenu(event, entryID, position) {
             y={menu.y}
             onClose={closeMenu}
         >
-          <hr className="border-bs-gray-950 my-1" />
+          <hr className="border-(--text) my-1" />
           
           <button
             className="block w-full text-left px-4 py-2 hover:bg-gray-500"

@@ -3,15 +3,33 @@
 :root {
     --bg: hsl(251, 30%, 11%);
     --bg-dark:   hsl(253, 70%, 5%);
+    --bg-light:   hsl(253, 70%, 15%);
     --text: hsl(258, 27%, 82%);
     --text-muted: hsl(258, 27%, 60%);
+    --text-more-muted: hsl(258, 27%, 30%);
     --primary: hsl(197, 100%, 66%);
     --secondary: hsl(225, 82%, 36%);
-    --max-width: 64rem
+    --gradient: linear-gradient(0deg, var(--bg), var(--bg-light)); 
+    --highlight: hsl(0%,0%,100%);
+    --error-color: hsl(332, 74%, 61%);
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --font-header: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+    --max-width: 64rem;
 
 }
 
-.dark {
+.light {
+    --bg: hsl(251, 30%, 96%);
+    --bg-dark:   hsl(253, 70%, 85%);
+    --bg-light: hsl(251, 20%, 90%);
+    --text: hsl(251, 20%, 15%);
+    --text-muted: hsl(251, 15%, 40%);
+    --text-more-muted: hsl(258, 27%, 70%);
+    --primary: hsl(197, 100%, 45%);
+    --secondary: hsl(225, 82%, 45%);
+    --gradient: linear-gradient(0deg, var(--bg), var(--bg-light)); 
+    --highlight: hsl(0%,0%,100%);
+
 }
 
 #root {
@@ -19,10 +37,108 @@
     justify-content: center;
     align-items: center;
     width: 100%;
+    border: var(--text-muted)
 }
 
 body {
-    background: var(--bg);
+    background: var(--bg-dark);
     color: var(--text);
+    /* font-family: var(--font-mono); */
+    font-family: monospace;
+    /* ui-monospace, uSFMono-Regular, Consolas, monospace; */
 }
+
+header{
+  /* font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif; */
+  /* Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif */
+}
+
+.card{
+    background: var(--gradient);
+    /* border: 1px solid var(--bg-light); */
+    border: 1px solid var(--text-muted); 
+    border-top: 3px solid var(--text); 
+    border-radius: 2%;
+    box-shadow: 0px 4px 4px #00000030, 0px 12px 12px #00000015;
+}
+
+
+/* Transitions.dev — Error state shake */
+
+/*
+  Usage:
+    <!-- Apply .t-input-wrap to your wrapper, .t-input to the
+         element that should shake (your input field, its
+         bordered wrapper — whatever owns the visible border),
+         and .t-error-msg to the message you want to reveal.
+         Bring your own sizing, padding, border colors, and
+         typography. -->
+    <div class="t-input-wrap">
+      <div class="t-input">
+        <input type="text">
+      </div>
+      <p class="t-error-msg">Please enter a valid email.</p>
+    </div>
+
+  Trigger:
+    - Add `.is-error` to .t-input-wrap and .t-input. Your
+      own border-color rules drive the visible color; this
+      stylesheet only owns the tween.
+    - Restart the shake by removing `.is-shaking` from
+      .t-input, forcing a reflow, then re-adding it.
+    - Optional: after --revert-hold ms, drop both
+      `.is-error` classes so border + message fade back
+      to neutral over --revert-dur.
+
+  Per-segment ease: each keyframe stop carries its own
+  animation-timing-function so each leg follows the Figma
+  cubic-bezier curve independently.
+*/
+
+:root {
+  --shake-distance: 6px;
+  --shake-overshoot: 4px;
+  --shake-dur-a: 80ms;
+  --shake-dur-b: 60ms;
+  --shake-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --revert-hold: 3000ms;
+  --revert-dur: 280ms;
+}
+
+/* Border-color tween. Define your input's default / focused
+   / error border-color in your own component CSS — this rule
+   only owns the interpolation. Use a constant border-width
+   across states so the tween never shifts inner content. */
+
+.t-input {
+  border-color: var(--text-muted);
+  transition: border-color 150ms ease-out;
+  will-change: transform;
+}
+.t-input.is-error {
+  border-color: var(--error-color);
+  transition: border-color var(--revert-dur, 280ms) ease-out;
+}
+
+/* Error message reveal. Visibility is delayed by --revert-dur
+   on hide so the message stays painted for the full opacity
+   fade-out. Entering .is-error drops the delay to 0 so the
+   message becomes visible immediately. */
+.t-error-msg {
+  color: var(--error-color);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity    var(--revert-dur, 280ms) ease-out,
+    visibility 0s linear var(--revert-dur, 280ms);
+}
+.t-input-wrap.is-error .t-error-msg {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity    var(--revert-dur, 280ms) ease-out,
+    visibility 0s linear 0s;
+}
+
+
 

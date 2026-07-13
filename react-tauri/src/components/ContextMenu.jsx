@@ -33,7 +33,7 @@ export default function ContextMenu({
 
   return (
     <div
-      className="fixed bg-white border border-black rounded-lg shadow-lg py-2 min-w-52 z-50"
+      className="fixed border bg-(--bg) border-white rounded-lg py-2 min-w-52 z-50"
       style={{
         left: x,
         top: y,
