@@ -92,6 +92,35 @@ export default function useVault(profile) {
     await loadEntries();
   }
 
+  // need Tauri commands for these first
+  
+  // async function editEntry (entryId) {
+  //   await invoke("delete_entry", {
+  //     profileUsername: profile.username,
+  //     entryId
+  //   });
+
+  //   await loadEntries();
+  // }
+
+  // async function copyUsername (entryId) {
+  //   await invoke("copy_entry_username", {
+  //     profileUsername: profile.username,
+  //     entryId
+  //   });
+
+  //   await loadEntries();
+  // }
+
+  //   async function copyPassword (entryId) {
+  //   await invoke("copy_entry_password", {
+  //     profileUsername: profile.username,
+  //     entryId
+  //   });
+
+  //   await loadEntries();
+  // }
+
   useEffect(() => {
     if (profile) {
       loadEntries();

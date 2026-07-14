@@ -2,6 +2,10 @@ use std::fs;
 use tauri::Manager;
 use serde::{Deserialize, Serialize};
 
+// TODO: Add encryption ins save_vault
+// TODO: Add tauri commands edit_entry, copy_entry_username, copyy_entry_password 
+
+
 #[derive(Serialize, Deserialize)]
 struct Vault {
     profiles: Vec<Profile>,
@@ -189,6 +193,9 @@ fn load_vault(app: &tauri::AppHandle) -> Result<Vault, String> {
 }
 
 fn save_vault(app: &tauri::AppHandle, vault: &Vault) -> Result<(), String> {
+
+    // add ecncryption here
+
     let path = get_vault_path(app)?;
     let json = serde_json::to_string_pretty(vault)
         .map_err(|error| error.to_string())?;

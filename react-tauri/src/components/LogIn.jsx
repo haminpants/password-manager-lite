@@ -5,6 +5,8 @@ import Form from "./Form";
 import InputText from "./InputText";
 import StatusMessage from "./StatusMessage";
 
+// TODO: Increase contrast of the see password icon. 
+
 /**
   * @name LogIn
   * @description

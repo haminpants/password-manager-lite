@@ -5,6 +5,8 @@ import useVault from "./hooks/useVault";
 import Form from "./Form";
 import InputText from "./InputText.jsx"
 
+// TODO: Add password generator
+
 /**
   * @name AddEntry
   * @description
@@ -129,6 +131,8 @@ function AddEntry({ profile }) {
           onChange={setPasswordInput}
           message="Invalid"
         />
+
+        {/* <Password Generator/> */}
 
       </Form>
 

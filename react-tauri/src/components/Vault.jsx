@@ -6,12 +6,10 @@ import VaultItem from "./VaultItem";
 import ContextMenu from "./ContextMenu";
 import EntryContextMenu from "./EntryContextMenu";
 
-// TODO: light mode
-// TODO: Login the see password icon is black (bad contrast)
-// TODO: Prevent user inputing empty passwords and username
+// TODO: Add light mode
 // TODO: Allow users to edit entries/vault items
-// TODO: Copy Password and Copy Username
-// TODO: Optional
+// TODO: Allow users to Copy Password and Copy Username
+// TODO: Hide passwords, use CSS
 // TODO: Optional: Sort vaultItem
 // TODO: Optional: Show date
 // TODO: Optional: Search function
