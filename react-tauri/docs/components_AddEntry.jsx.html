@@ -30,6 +30,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useVault from "./hooks/useVault";
+import Form from "./Form";
+import InputText from "./InputText.jsx"
 
 /**
   * @name AddEntry
@@ -67,9 +69,6 @@ import useVault from "./hooks/useVault";
   * 
   * **handleSubmit()**
   * 
-  * 
-  * - handleSubmit is a helper function
-  * 
   * - Prevents default behaviour of onSubmit.
   * 
   * - Creates the object *newEntry* and calls the {@link add_entry} tauri-command.
@@ -85,83 +84,81 @@ import useVault from "./hooks/useVault";
 
 function AddEntry({ profile }) {
 
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const [app, setApp] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+    const [appNameInput, setAppNameInput] = useState("");
+    const [usernameInput, setUsernameInput] = useState("");
+    const [passwordInput, setPasswordInput] = useState("");
+    const [statusMessage, setStatusMessage] = useState(""); 
 
-  const {
-    addEntry
-  } = useVault(profile);
+    async function handleSubmit(event) {
+        event.preventDefault();
 
+        if ( !appNameInput.trim() || !usernameInput.trim() || !passwordInput) {
+            setStatusMessage("Please fill all boxes.");
+            return;
+        }
 
-//    * @function
-//  * @memberof AddEntry
-//  * @public
+        const newEntry = {
+            id: Date.now(),
+            app: appNameInput,
+            username: usernameInput,
+            password: passwordInput
+        };
 
-/**
- * @function
-*/
-  async function handleSubmit(event) {
-    event.preventDefault();
+        try {
+            await invoke("add_entry", {
+            profileUsername: profile.username,
+            entry: newEntry
+        });
 
-    const newEntry = {
-      id: Date.now(),
-      app,
-      username,
-      password
-    };
-
-    await invoke("add_entry", {
-        profileUsername: profile.username,
-        entry: newEntry
-    });
-    
-    navigate("/Vault");
-
-  }
+            navigate("/Vault");
+        } catch (error) {
+                console.error("Could not add entry:", error);
+        }
+    }   
 
 
   return (
-    &lt;div className="flex flex-col justify-center items-center h-screen gap-12">
+    &lt;div>
+        
 
-      &lt;h1 className="text-sky-300 text-4xl"
-        >Add Entry&lt;/h1>
+      &lt;Form
+        title="Add Entry"
+        submitButtonText="Add Entry"
+        onSubmit={handleSubmit}
+        alternateButtonText={"Cancel"}
+        alternateAction={() => 
+            navigate("/Vault")
+        }
+        statusMessage={statusMessage}
+      >
 
-      &lt;form className="flex flex-col gap-2" 
-        onSubmit={handleSubmit}>
-
-          &lt;label> App &lt;/label>
-          &lt;input
-            className="border border-grey px-1"
-            value={app}
-            onChange={(e) => setApp(e.target.value)}
-          />
+        &lt;InputText
+          label="App"
+          value={appNameInput}
+          onChange={setAppNameInput}
+          message="Invalid"
+        />
 
 
-          &lt;label> Username &lt;/label>
-          &lt;input
-            className="border border-grey px-1" 
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
+        &lt;InputText
+          label="Username"
+          type="username"
+          value={usernameInput}
+          onChange={setUsernameInput}
+          message="Invalid"
+        />
 
-          &lt;label> Password &lt;/label>
-          &lt;input
-            className="border border-grey px-1"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+        &lt;InputText
+          label="Password"
+          type="password"
+          value={passwordInput}
+          onChange={setPasswordInput}
+          message="Invalid"
+        />
 
-        &lt;button 
-          className="mt-3 text-sky-300 hover:text-sky-700"
-          type="submit">
-            Save
-        &lt;/button>
-
-      &lt;/form>
+      &lt;/Form>
 
     &lt;/div>
   );
@@ -177,13 +174,13 @@ export default AddEntry;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddEntry">AddEntry</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#ContextMenu">ContextMenu</a></li><li><a href="global.html#EntryContextMenu">EntryContextMenu</a></li><li><a href="global.html#LogIn">LogIn</a></li><li><a href="global.html#Vault">Vault</a></li><li><a href="global.html#VaultItem">VaultItem</a></li><li><a href="global.html#useVault">useVault</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddEntry">AddEntry</a></li><li><a href="global.html#AddProfile">AddProfile</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#ContextMenu">ContextMenu</a></li><li><a href="global.html#EntryContextMenu">EntryContextMenu</a></li><li><a href="global.html#Form">Form</a></li><li><a href="global.html#InputText">InputText</a></li><li><a href="global.html#LogIn">LogIn</a></li><li><a href="global.html#Vault">Vault</a></li><li><a href="global.html#VaultItem">VaultItem</a></li><li><a href="global.html#useVault">useVault</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Jul 13 2026 21:20:28 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Tue Jul 14 2026 11:17:38 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

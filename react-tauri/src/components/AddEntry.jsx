@@ -2,6 +2,8 @@ import { invoke } from "@tauri-apps/api/core";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useVault from "./hooks/useVault";
+import Form from "./Form";
+import InputText from "./InputText.jsx"
 
 /**
   * @name AddEntry
@@ -39,9 +41,6 @@ import useVault from "./hooks/useVault";
   * 
   * **handleSubmit()**
   * 
-  * 
-  * - handleSubmit is a helper function
-  * 
   * - Prevents default behaviour of onSubmit.
   * 
   * - Creates the object *newEntry* and calls the {@link add_entry} tauri-command.
@@ -57,83 +56,81 @@ import useVault from "./hooks/useVault";
 
 function AddEntry({ profile }) {
 
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const [app, setApp] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+    const [appNameInput, setAppNameInput] = useState("");
+    const [usernameInput, setUsernameInput] = useState("");
+    const [passwordInput, setPasswordInput] = useState("");
+    const [statusMessage, setStatusMessage] = useState(""); 
 
-  const {
-    addEntry
-  } = useVault(profile);
+    async function handleSubmit(event) {
+        event.preventDefault();
 
+        if ( !appNameInput.trim() || !usernameInput.trim() || !passwordInput) {
+            setStatusMessage("Please fill all boxes.");
+            return;
+        }
 
-//    * @function
-//  * @memberof AddEntry
-//  * @public
+        const newEntry = {
+            id: Date.now(),
+            app: appNameInput,
+            username: usernameInput,
+            password: passwordInput
+        };
 
-/**
- * @function
-*/
-  async function handleSubmit(event) {
-    event.preventDefault();
+        try {
+            await invoke("add_entry", {
+            profileUsername: profile.username,
+            entry: newEntry
+        });
 
-    const newEntry = {
-      id: Date.now(),
-      app,
-      username,
-      password
-    };
-
-    await invoke("add_entry", {
-        profileUsername: profile.username,
-        entry: newEntry
-    });
-    
-    navigate("/Vault");
-
-  }
+            navigate("/Vault");
+        } catch (error) {
+                console.error("Could not add entry:", error);
+        }
+    }   
 
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen gap-12">
+    <div>
+        
 
-      <h1 className="text-sky-300 text-4xl"
-        >Add Entry</h1>
+      <Form
+        title="Add Entry"
+        submitButtonText="Add Entry"
+        onSubmit={handleSubmit}
+        alternateButtonText={"Cancel"}
+        alternateAction={() => 
+            navigate("/Vault")
+        }
+        statusMessage={statusMessage}
+      >
 
-      <form className="flex flex-col gap-2" 
-        onSubmit={handleSubmit}>
-
-          <label> App </label>
-          <input
-            className="border border-grey px-1"
-            value={app}
-            onChange={(e) => setApp(e.target.value)}
-          />
+        <InputText
+          label="App"
+          value={appNameInput}
+          onChange={setAppNameInput}
+          message="Invalid"
+        />
 
 
-          <label> Username </label>
-          <input
-            className="border border-grey px-1" 
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
+        <InputText
+          label="Username"
+          type="username"
+          value={usernameInput}
+          onChange={setUsernameInput}
+          message="Invalid"
+        />
 
-          <label> Password </label>
-          <input
-            className="border border-grey px-1"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+        <InputText
+          label="Password"
+          type="password"
+          value={passwordInput}
+          onChange={setPasswordInput}
+          message="Invalid"
+        />
 
-        <button 
-          className="mt-3 text-sky-300 hover:text-sky-700"
-          type="submit">
-            Save
-        </button>
-
-      </form>
+      </Form>
 
     </div>
   );

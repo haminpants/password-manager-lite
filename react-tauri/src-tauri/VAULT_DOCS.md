@@ -74,6 +74,28 @@ Saves a new entry into a user's profile.
 
 ---
 
+### `add_profile`
+```rust
+fn add_profile(app: tauri::AppHandle, username: String, password: String) -> Result<(), String>
+```
+Creates a new profile in the vault.
+
+- Loads the current vault.
+- Checks whether a profile with the same username already exists.
+- Creates a new profile with an empty list of entries.
+- Persists the updated vault back to disk.
+
+**Arguments**
+- `app` — Tauri application handle used to access the vault file.
+- `username` — Username of the new profile.
+- `password` — Password of the new profile.
+
+**Errors**
+- Returns `"Profile already exists"` if a profile with the same username is found.
+- Returns an error string if the vault cannot be loaded or saved.
+
+---
+
 ### `delete_entry`
 ```rust
 fn delete_entry(app: tauri::AppHandle, profile_username: String, entry_id: u64) -> Result<(), String>
@@ -114,7 +136,7 @@ Serializes a `Vault` struct to pretty-printed JSON and writes it to `vault.json`
 ```rust
 fn get_vault_path(app: &tauri::AppHandle) -> Result<std::path::PathBuf, String>
 ```
-Returns the location of `vault.json` on the user's device, built from Tauri's
+Returns the locationx of `vault.json` on the user's device, built from Tauri's
 application data directory.
 
 **Returns**

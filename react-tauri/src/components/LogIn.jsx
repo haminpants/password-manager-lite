@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { InputShake } from "./InputShake";
-
-//TODO: Add logic for adding new accounts
-
+import Form from "./Form";
+import InputText from "./InputText";
+import StatusMessage from "./StatusMessage";
 
 /**
   * @name LogIn
@@ -29,11 +27,9 @@ import { InputShake } from "./InputShake";
   * 
   * **handleSubmit()**
   * 
-  * - handleSubmit is a helper function.
-  * 
   * - Checks that the user entered a profile and password.
   * 
-  * - Calls the {@link get_credentials} tauri-command to retrieve vault data.
+  * - Calls the get_credentials tauri-command to retrieve vault data.
   * 
   * - Finds a matching profile from the stored profiles.
   * 
@@ -41,50 +37,49 @@ import { InputShake } from "./InputShake";
   * 
   * - If no profile is found, increases *logInAttempts* to trigger {@link InputShake}.
   * 
-  *  Note: The selected profile is stored in App.jsx and passed down to pages that need access to the current profile.
+  * Note: The selected profile is stored in App.jsx and passed down to pages that need access to the current profile.
   * 
   * ----
   * 
   * @param {Function} setProfile - Function used to save the currently selected profile
   */
- 
+
 export default function LogIn({ setProfile }) {
   const navigate = useNavigate();
+
   const [profileNameInput, setProfileNameInput] = useState("");
   const [profilePasswordInput, setProfilePasswordInput] = useState("");
   const [message, setMessage] = useState("");
   const [logInAttempts, setLogInAttempts] = useState(0);
 
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // user has not entered a username or password
     if (!profileNameInput.trim() || !profilePasswordInput) {
       setMessage("Please enter both profile and password.");
       return;
     }
 
-    // if user has entered username and password
     try {
-      const vaultJSON = await invoke("get_credentials"); // invoke tauri command get_credentials; get username and password from vault.json
-      const vault = JSON.parse(vaultJSON);  
-      const profiles = vault.profiles;
+      const vaultJSON = await invoke("get_credentials");
+      const vault = JSON.parse(vaultJSON);
 
-      // find if the input profile name and password matches with an entry in vault.json assign it as matchingProfile
-      const matchingProfile  = profiles.find(
+      const matchingProfile = vault.profiles.find(
         (profile) =>
           profile.username === profileNameInput &&
           profile.password === profilePasswordInput
       );
 
-      // if mathingProfile exist, set it for App.jsx, App sends it to Vault.jsx, then move to Vault
+
       if (matchingProfile) {
         setProfile(matchingProfile);
         setMessage("Log-In successful");
-        navigate("/Vault"); 
+        navigate("/Vault");
+
       } else {
         setMessage("Invalid username or password");
-        setLogInAttempts(prev => prev + 1 ); // count log-in attempts, also forces the input text to rerender
+        setLogInAttempts((prev) => prev + 1);
       }
 
     } catch (error) {
@@ -94,47 +89,36 @@ export default function LogIn({ setProfile }) {
 
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen gap-12">
+    <div>
 
-      <h1 className="text-sky-300 text-4xl">
-        Password Manager
-      </h1>
+      <Form
+        title="Password Manager"
+        submitButtonText="Unlock"
+        onSubmit={handleSubmit}
+        alternateButtonText={"Add Profile"}
+        alternateAction={() => navigate("/AddProfile")}
+        statusMessage={message}
+      >
 
-      <form className="flex flex-col gap-2" 
-        onSubmit={handleSubmit}>
+        <InputText
+          label="Profile"
+          value={profileNameInput}
+          onChange={setProfileNameInput}
+          message="Invalid profile or password"
+          triggerError={logInAttempts}
+        />
 
-        <label htmlFor="username">Profile</label>
-        <InputShake message="Invalid profile or password" triggerError={logInAttempts}>
-          <input
-            className="border border-grey px-1"
-            id="username"
-            name="username"
-            type="text"
-            value={profileNameInput}
-            onChange={(event) => setProfileNameInput(event.target.value)}
-            autoComplete="username"
-          />
-        </InputShake>
+        <InputText
+          label="Password"
+          type="password"
+          value={profilePasswordInput}
+          onChange={setProfilePasswordInput}
+          message="Invalid profile or password"
+          triggerError={logInAttempts}
+        />
 
-        <label htmlFor="password">Password</label>
-        <InputShake message="Invalid profile or password" triggerError={logInAttempts}>
-          <input
-            className="border border-grey px-1"
-            id="password"
-            name="password"
-            type="password"
-            value={profilePasswordInput}
-            onChange={(event) => setProfilePasswordInput(event.target.value)}
-            autoComplete="current-password"
-          />
-        </InputShake>
+      </Form>
 
-        <button className="mt-3 text-sky-300 hover:text-sky-700"
-           type="submit">Unlock</button>
-      </form>
-      <p className="whitespace-pre-line text-center">
-        {message}
-      </p>
     </div>
   );
 }

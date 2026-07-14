@@ -131,6 +131,52 @@ fn delete_entry(app: tauri::AppHandle, profile_username: String, entry_id: u64) 
     Ok(())
 }
 
+/// Tauri command used to create a new profile.
+///
+/// Loads the current vault, checks whether the username already exists,
+/// creates a new profile with an empty list of entries, and saves the
+/// updated vault.
+///
+/// # Arguments
+///
+/// * `app` - Tauri application handle used to access the vault file.
+/// * `username` - Username for the new profile.
+/// * `password` - Password for the new profile.
+///
+/// # Errors
+///
+/// Returns an error string if the vault cannot be loaded or saved, or if
+/// a profile with the same username already exists.
+#[tauri::command]
+fn add_profile(
+    app: tauri::AppHandle,
+    username: String,
+    password: String,
+) -> Result<(), String> {
+
+    let mut vault = load_vault(&app)?;
+
+    let profile_exists = vault.profiles
+        .iter()
+        .any(|profile| profile.username == username);
+
+    if profile_exists {
+        return Err("Profile already exists".to_string());
+    }
+
+    let new_profile = Profile {
+        username,
+        password,
+        entries: vec![],
+    };
+
+    vault.profiles.push(new_profile);
+
+    save_vault(&app, &vault)?;
+
+    Ok(())
+}
+
 
 fn load_vault(app: &tauri::AppHandle) -> Result<Vault, String> {
     let path = get_vault_path(app)?;
@@ -225,7 +271,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             get_credentials,
             add_entry,
-            delete_entry
+            delete_entry,
+            add_profile
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -56,8 +56,8 @@ header{
 .card{
     background: var(--gradient);
     /* border: 1px solid var(--bg-light); */
-    border: 1px solid var(--text-muted); 
-    border-top: 3px solid var(--text); 
+    border: 1px solid var(--text-more-muted); 
+    border-top: 2px solid var(--text); 
     border-radius: 2%;
     box-shadow: 0px 4px 4px #00000030, 0px 12px 12px #00000015;
 }

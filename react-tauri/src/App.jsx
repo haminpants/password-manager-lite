@@ -4,6 +4,7 @@ import "./App.css";
 import LogIn from "./components/LogIn";
 import Vault from "./components/Vault";
 import AddEntry from "./components/AddEntry";
+import AddProfile from "./components/AddProfile";
 
 /**
   * @name App
@@ -37,13 +38,14 @@ import AddEntry from "./components/AddEntry";
   * 
   * @returns {JSX.Element} The root application component containing the application routes
   */
- 
+
 function App() {
   const [profile, setProfile] = useState(null);
   return (
     <main className="w-full max-w-5xl">
       <Routes>
         <Route path="/" element={<LogIn setProfile={setProfile} />} />
+        <Route path="/AddProfile" element={<AddProfile />} />
         <Route path="/Vault" element={<Vault profile={profile} />} />
         <Route path="/Vault/AddEntry" element={<AddEntry profile={profile} />} />
       </Routes>
