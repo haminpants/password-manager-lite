@@ -1,3 +1,28 @@
+/**
+ * Wraps an input element and triggers a shake animation for error states.
+ *
+ * Used to visually indicate invalid input. The component handles the shake
+ * animation and temporary error styling when triggered.
+ *
+ * ###### Impelentation Logic
+  * 
+  * InputShake controls the error animation state using *triggerError*.
+  * 
+  * When *triggerError* changes, it calls the helper function *trigger()* to start the shake animation.
+  * 
+  * 
+  * **trigger()**
+  * 
+  * - trigger is a helper function.
+  * 
+  * - Adds the shake animation class to the input.
+  * 
+  * - Removes and re-adds the animation class to allow the animation to replay.
+  * 
+  * - Automatically removes the error state after the animation timer finishes.
+ */
+
+
 // Transitions.dev — Error state shake (React, self-contained)
 // Drop into any React project — no extra CSS file needed.
 

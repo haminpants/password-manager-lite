@@ -1,61 +1,36 @@
-import { invoke } from "@tauri-apps/api/core";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import useVault from "./hooks/useVault";
-
 /**
-  * @name AddEntry
-  * @description
-  * ----
-  * 
-  * ###### Description
-  * - AddEntry is where users create new entries for their vault.
-  * 
-  * - Users arrive to AddEntry from {@link Vault}. 
-  * 
-  * - AddEntry asks for the app, username, and password of the new entry via a submission form. 
-  * 
-  * - AddEntry saves the new entry in the currently selected {@link profile}. 
-  * 
-  * ----
-  * 
-  * 
-  * ###### Impelentation Logic
-  * From Vault, profile is passed as a prop then received in AddEntry:
-  *
-  * Vault:
-  * 
-  *       <AddEntry profile={profile} />
-  * 
-  *  AddEntry:
-  * 
-  *       function AddEntry({ profile })
-  * 
-  * 
-  * The entry form is written with HTML tags.
-  * Upon onSubmit, it calls the function *handleSubmit()*
-  * 
-  * 
-  * 
-  * **handleSubmit()**
-  * 
-  * 
-  * - handleSubmit is a helper function
-  * 
-  * - Prevents default behaviour of onSubmit.
-  * 
-  * - Creates the object *newEntry* and calls the {@link add_entry} tauri-command.
-  * 
-  * - *add_entry* saves the the entry natively in the device's file system.
-  * 
-  * - Navigates back to Vault.
-  * 
-  * ----
-  * 
-  * @param {Object} profile - The profile currently selected used to link the new entry
-  */
+ * @component
+ * 
+ * ## Purpose
+ * Page where users create a new vault-entry.
+ * A vault-entry contains the app, username, and password
+ * that users choose to save.
+ * 
+ * ## Usage
+ * Users land on this page after clicking 
+ * the Add Entry button from the Vault page
+ * AddEntry displays a text input form that users fill and submit.
+ * 
+ * ## Implementation logic
+ * AddEntry receives currently selected profile from Vault.jsx
+ * 
+ *Within Vault, the profile is passed as a prop:
+ *     <AddEntry profile={profile} />
+ * 
+ * The data is received in AddEntry:
+ *     function AddEntry({ profile })
+ * 
+ * AddEntry displays a form where users enter the new vault entry's values.
+ * Submitting the form calls the function handleSubmit
+ * handleSubmit associates the new entry to the currently selected profile.
+ * It calls tauri command 'add_entry' which stores the entry within app data files.
+ * Goes back to the Vault page. 
+ * 
+ * @param {Object} profile - The profile currently selectedm used to link the new entry
+ * @returns {JSX.Element} The AddEntry page.
+ */
 
-function AddEntry({ profile }) {
+export default function AddEntry({ profile }) {
 
   const navigate = useNavigate();
 
@@ -67,14 +42,6 @@ function AddEntry({ profile }) {
     addEntry
   } = useVault(profile);
 
-
-//    * @function
-//  * @memberof AddEntry
-//  * @public
-
-/**
- * @function
-*/
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -138,5 +105,3 @@ function AddEntry({ profile }) {
     </div>
   );
 }
-
-export default AddEntry;

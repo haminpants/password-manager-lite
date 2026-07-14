@@ -24,6 +24,19 @@ struct Entry {
 
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+
+/// Tauri command used by the frontend to retrieve the vault data.
+///
+/// Reads the `vault.json` file from the application's data directory and
+/// returns the contents as a JSON string.
+///
+/// # Arguments
+///
+/// * `app` - Tauri application handle used to access the vault file location.
+///
+/// # Errors
+///
+/// Returns an error string if the vault file cannot be read.
 #[tauri::command]
 fn get_credentials(app: tauri::AppHandle) -> Result<String, String> {
 
@@ -45,6 +58,21 @@ fn get_credentials(app: tauri::AppHandle) -> Result<String, String> {
     Ok(data)
 }
 
+/// Tauri command used to save a new entry into a user's profile.
+///
+/// Loads the current vault, finds the matching profile, adds the entry, and
+/// saves the updated vault.
+///
+/// # Arguments
+///
+/// * `app` - Tauri application handle used to access the vault file.
+/// * `profile_username` - Username of the profile where the entry will be added.
+/// * `entry` - The entry data that will be saved.
+///
+/// # Errors
+///
+/// Returns an error string if the vault cannot be loaded/saved or the profile
+/// is not found.
 #[tauri::command]
 fn add_entry(app: tauri::AppHandle, profile_username: String, entry: Entry) -> Result<(), String> {
 
@@ -67,6 +95,21 @@ fn add_entry(app: tauri::AppHandle, profile_username: String, entry: Entry) -> R
     Ok(())
 }
 
+/// Tauri command used to remove an entry from a user's profile.
+///
+/// Loads the current vault, finds the matching profile, removes the entry
+/// by ID, and saves the updated vault.
+///
+/// # Arguments
+///
+/// * `app` - Tauri application handle used to access the vault file.
+/// * `profile_username` - Username of the profile containing the entry.
+/// * `entry_id` - ID of the entry that should be deleted.
+///
+/// # Errors
+///
+/// Returns an error string if the vault cannot be loaded/saved or the profile
+/// is not found.
 #[tauri::command]
 fn delete_entry(app: tauri::AppHandle, profile_username: String, entry_id: u64) -> Result<(), String> {
     let mut vault = load_vault(&app)?;
@@ -88,6 +131,7 @@ fn delete_entry(app: tauri::AppHandle, profile_username: String, entry_id: u64) 
     Ok(())
 }
 
+
 fn load_vault(app: &tauri::AppHandle) -> Result<Vault, String> {
     let path = get_vault_path(app)?;
     let data = fs::read_to_string(&path)
@@ -108,6 +152,18 @@ fn save_vault(app: &tauri::AppHandle, vault: &Vault) -> Result<(), String> {
     Ok(())
 }
 
+
+/// Returns the location of `vault.json` on the user's device.
+///
+/// The path is created using Tauri's application data directory.
+///
+/// # Arguments
+///
+/// * `app` - Tauri application handle used to access the application data directory.
+///
+/// # Returns
+///
+/// The `PathBuf` pointing to `vault.json`.
 fn get_vault_path(app: &tauri::AppHandle) -> Result<std::path::PathBuf, String> {
     let path = app
         .path()
@@ -120,6 +176,14 @@ fn get_vault_path(app: &tauri::AppHandle) -> Result<std::path::PathBuf, String> 
     Ok(path)
 }
 
+
+/// Creates the initial `vault.json` file when the application starts.
+///
+/// If a vault file already exists, no changes are made.
+///
+/// # Arguments
+///
+/// * `app` - Tauri application handle used to access the vault file location.
 fn initialize_vault(app: &tauri::AppHandle) -> Result<(), String> {
     let path = get_vault_path(app)?;
 

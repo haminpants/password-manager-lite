@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Global</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Global</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2></h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="AddEntry"><span class="type-signature"></span>AddEntry<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <hr>
+<h6>Description</h6>
+<ul>
+<li>
+<p>AddEntry is where users create new entries for their vault.</p>
+</li>
+<li>
+<p>Users arrive to AddEntry from <a href="global.html#Vault">Vault</a>.</p>
+</li>
+<li>
+<p>AddEntry asks for the app, username, and password of the new entry via a submission form.</p>
+</li>
+<li>
+<p>AddEntry saves the new entry in the currently selected profile.</p>
+</li>
+</ul>
+<hr>
+<h6>Impelentation Logic</h6>
+<p>From Vault, profile is passed as a prop then received in AddEntry:</p>
+<p>Vault:</p>
+<pre><code>  &lt;AddEntry profile={profile} /&gt;
+</code></pre>
+<p>AddEntry:</p>
+<pre><code>  function AddEntry({ profile })
+</code></pre>
+<p>The entry form is written with HTML tags.
+Upon onSubmit, it calls the function <em>handleSubmit()</em></p>
+<p><strong>handleSubmit()</strong></p>
+<ul>
+<li>
+<p>handleSubmit is a helper function</p>
+</li>
+<li>
+<p>Prevents default behaviour of onSubmit.</p>
+</li>
+<li>
+<p>Creates the object <em>newEntry</em> and calls the add_entry tauri-command.</p>
+</li>
+<li>
+<p><em>add_entry</em> saves the the entry natively in the device's file system.</p>
+</li>
+<li>
+<p>Navigates back to Vault.</p>
+</li>
+</ul>
+<hr>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_AddEntry.jsx.html">components/AddEntry.jsx</a>, <a href="components_AddEntry.jsx.html#line6">line 6</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="App"><span class="type-signature"></span>App<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <hr>
+<h6>Description</h6>
+<ul>
+<li>
+<p>App is the root component of the application.</p>
+</li>
+<li>
+<p>App manages the currently selected profile state and provides it to pages that require access to the user's vault.</p>
+</li>
+<li>
+<p>App handles navigation between <a href="global.html#LogIn">LogIn</a>, <a href="global.html#Vault">Vault</a>, and <a href="global.html#AddEntry">AddEntry</a> using React Router.</p>
+</li>
+</ul>
+<hr>
+<h6>Impelentation Logic</h6>
+<p>App stores the currently logged-in profile using state.</p>
+<p>The profile is initially set to null and updated after a successful login.</p>
+<p>The profile is passed through props:</p>
+<ul>
+<li>
+<p><a href="global.html#LogIn">LogIn</a> receives setProfile and updates the current profile after authentication.</p>
+</li>
+<li>
+<p><a href="global.html#Vault">Vault</a> receives the selected profile to load the user's entries.</p>
+</li>
+<li>
+<p><a href="global.html#AddEntry">AddEntry</a> receives the selected profile to save new entries to the correct vault.</p>
+</li>
+</ul>
+<hr>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="App.jsx.html">App.jsx</a>, <a href="App.jsx.html#line8">line 8</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="ContextMenu"><span class="type-signature"></span>ContextMenu<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <hr>
+<h6>Description</h6>
+<ul>
+<li>
+<p>ContextMenu is a reusable component that displays a menu at a specific location on the screen.</p>
+</li>
+<li>
+<p>ContextMenu is used when users interact with elements that require additional actions, such as right-clicking or selecting a menu button.</p>
+</li>
+<li>
+<p>ContextMenu receives its position through the <em>x</em> and <em>y</em> props and displays its children inside the menu container.</p>
+</li>
+<li>
+<p>ContextMenu automatically closes when the user clicks outside the menu or presses the Escape key.</p>
+</li>
+</ul>
+<hr>
+<h6>Impelentation Logic</h6>
+<p>ContextMenu receives the following props:</p>
+<p><code>visible</code></p>
+<ul>
+<li>Controls whether the menu is displayed or hidden.</li>
+</ul>
+<p><code>onClose</code></p>
+<ul>
+<li>A function passed from the parent component used to close the menu.</li>
+</ul>
+<p><code>children</code></p>
+<ul>
+<li>The content that will be displayed inside the menu.</li>
+</ul>
+<p><strong>useEffect()</strong></p>
+<ul>
+<li>
+<p>useEffect watches the <em>visible</em> state of the menu.</p>
+</li>
+<li>
+<p>When ContextMenu becomes visible, it adds event listeners to detect outside clicks and Escape key presses.</p>
+</li>
+<li>
+<p>When either event occurs, it calls the <em>onClose()</em> function.</p>
+</li>
+<li>
+<p>When ContextMenu becomes hidden or is removed, the event listeners are cleaned up.</p>
+</li>
+</ul>
+<p><strong>handleOutsideClick()</strong></p>
+<ul>
+<li>
+<p>handleOutsideClick is a helper function.</p>
+</li>
+<li>
+<p>Closes the menu when the user clicks anywhere outside of ContextMenu.</p>
+</li>
+</ul>
+<p><strong>handleEscape()</strong></p>
+<ul>
+<li>
+<p>handleEscape is a helper function.</p>
+</li>
+<li>
+<p>Checks if the user presses the Escape key.</p>
+</li>
+<li>
+<p>Closes the menu if the Escape key is pressed.</p>
+</li>
+</ul>
+<p>The menu only renders when <em>visible</em> is true.</p>
+<p>If <em>visible</em> is false, ContextMenu returns null and does not display anything.</p>
+<p>The menu position is controlled using inline styles:</p>
+<pre class="prettyprint source lang-style={{"><code>  left: x,
+  top: y,
+}}
+</code></pre>
+<p>This allows the menu to appear where the user interacted with the screen.</p>
+<p>The menu uses <em>stopPropagation()</em> to prevent clicks inside the menu from triggering the outside click listener.</p>
+<hr>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_ContextMenu.jsx.html">components/ContextMenu.jsx</a>, <a href="components_ContextMenu.jsx.html#line3">line 3</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="EntryContextMenu"><span class="type-signature"></span>EntryContextMenu<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <hr>
+<h6>Description</h6>
+<ul>
+<li>
+<p>EntryContextMenu displays actions that can be performed on a vault entry.</p>
+</li>
+<li>
+<p>EntryContextMenu is displayed inside <a href="global.html#ContextMenu">ContextMenu</a> when a user selects a VaultItem.</p>
+</li>
+<li>
+<p>EntryContextMenu provides actions such as editing, deleting, and copying entry information.</p>
+</li>
+</ul>
+<hr>
+<h6>Impelentation Logic</h6>
+<p>EntryContextMenu receives the selected entry ID and entry actions from Vault.</p>
+<p><strong>handleDelete()</strong></p>
+<ul>
+<li>
+<p>Deletes the selected entry using <em>deleteEntry()</em>.</p>
+</li>
+<li>
+<p>Closes the context menu after deletion.</p>
+</li>
+</ul>
+<p>EntryContextMenu does not manage the context menu state.</p>
+<p>The menu visibility is controlled by Vault, while EntryContextMenu only handles actions related to the selected entry.</p>
+<hr>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_EntryContextMenu.jsx.html">components/EntryContextMenu.jsx</a>, <a href="components_EntryContextMenu.jsx.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="LogIn"><span class="type-signature"></span>LogIn<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <hr>
+<h6>Description</h6>
+<ul>
+<li>
+<p>LogIn is the page where users enter their profile and password to access their vault.</p>
+</li>
+<li>
+<p>LogIn checks the entered credentials against profiles stored in <em>vault.json</em>.</p>
+</li>
+<li>
+<p>If successful, the selected profile is saved and the user is navigated to <a href="global.html#Vault">Vault</a>.</p>
+</li>
+<li>
+<p>If unsuccessful, LogIn displays an error message and triggers InputShake.</p>
+</li>
+</ul>
+<hr>
+<h6>Impelentation Logic</h6>
+<p>The login form calls <strong>handleSubmit()</strong> when the user submits their credentials.</p>
+<p><strong>handleSubmit()</strong></p>
+<ul>
+<li>
+<p>handleSubmit is a helper function.</p>
+</li>
+<li>
+<p>Checks that the user entered a profile and password.</p>
+</li>
+<li>
+<p>Calls the get_credentials tauri-command to retrieve vault data.</p>
+</li>
+<li>
+<p>Finds a matching profile from the stored profiles.</p>
+</li>
+<li>
+<p>If a profile is found, updates the current profile and navigates to <a href="global.html#Vault">Vault</a>.</p>
+</li>
+<li>
+<p>If no profile is found, increases <em>logInAttempts</em> to trigger InputShake.</p>
+</li>
+</ul>
+<p>Note: The selected profile is stored in App.jsx and passed down to pages that need access to the current profile.</p>
+<hr>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_LogIn.jsx.html">components/LogIn.jsx</a>, <a href="components_LogIn.jsx.html#line10">line 10</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="Vault"><span class="type-signature"></span>Vault<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <hr>
+<h6>Description</h6>
+<ul>
+<li>
+<p>Vault is the main page where users view and manage entries stored in their profile.</p>
+</li>
+<li>
+<p>Vault loads entries from the current profile using <a href="global.html#useVault">useVault</a>.</p>
+</li>
+<li>
+<p>Vault displays each entry using <a href="global.html#VaultItem">VaultItem</a> and provides entry actions through <a href="global.html#EntryContextMenu">EntryContextMenu</a>.</p>
+</li>
+<li>
+<p>Users can navigate to <a href="global.html#AddEntry">AddEntry</a> to add a new entry or manage existing entries through the context menu.</p>
+</li>
+</ul>
+<hr>
+<h6>Impelentation Logic</h6>
+<p>The selected profile is passed from App.jsx into Vault.</p>
+<p>Vault uses the profile with <a href="global.html#useVault">useVault</a> to load the entries belonging to that profile.</p>
+<ul>
+<li>
+<p>Vault maps through the loaded entries and creates a VaultItem for each entry.</p>
+</li>
+<li>
+<p>Entries are passed into VaultItem where VaultItem renders the information</p>
+</li>
+<li>
+<p>VaultItem receives the entry data and the context menu handler.</p>
+</li>
+</ul>
+<hr>
+<h6>ContextMenu</h6>
+<p>The context menu is separated into two components:</p>
+<ul>
+<li>
+<p><a href="global.html#ContextMenu">ContextMenu</a> handles displaying the menu and detecting when it should close.</p>
+</li>
+<li>
+<p><a href="global.html#EntryContextMenu">EntryContextMenu</a> handles actions related to a vault entry, such as edit, delete, copy, etc.</p>
+</li>
+</ul>
+<p><strong>handleContextMenu()</strong></p>
+<ul>
+<li>
+<p>Opens the context menu when a VaultItem is selected.</p>
+</li>
+<li>
+<p>Stores the menu position and the selected entry ID.</p>
+</li>
+<li>
+<p>Passes the selected entry information to EntryContextMenu.</p>
+</li>
+</ul>
+<p><strong>closeMenu()</strong></p>
+<ul>
+<li>Hides the context menu and clears the selected entry.</li>
+</ul>
+<p>Note: These functions remain in Vault because Vault owns the selected entry state and needs to know which VaultItem the user interacted with.</p>
+<hr>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_Vault.jsx.html">components/Vault.jsx</a>, <a href="components_Vault.jsx.html#line19">line 19</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="VaultItem"><span class="type-signature"></span>VaultItem<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <hr>
+<h6>Description</h6>
+<ul>
+<li>
+<p>VaultItem displays the information of a single vault entry.</p>
+</li>
+<li>
+<p>VaultItem shows the entry application name, username, and password.</p>
+</li>
+<li>
+<p>VaultItem allows users to open the <a href="global.html#ContextMenu">ContextMenu</a> for the selected entry through right-clicking or the menu button.</p>
+</li>
+</ul>
+<hr>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_VaultItem.jsx.html">components/VaultItem.jsx</a>, <a href="components_VaultItem.jsx.html#line6">line 6</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="useVault"><span class="type-signature"></span>useVault<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <hr>
+<h6>Description</h6>
+<ul>
+<li>
+<p>useVault is a custom hook used to manage vault entries for the currently selected profile.</p>
+</li>
+<li>
+<p>useVault loads, adds, and deletes entries by communicating with Tauri commands.</p>
+</li>
+<li>
+<p>useVault provides the entry data and functions needed by <a href="global.html#Vault">Vault</a> to display and manage entries.</p>
+</li>
+</ul>
+<hr>
+<h6>Impelentation Logic</h6>
+<p>useVault receives the current profile and uses it to identify which vault entries should be loaded.</p>
+<p><strong>loadEntries()</strong></p>
+<ul>
+<li>
+<p>Retrieves the vault data using the get_credentials tauri-command.</p>
+</li>
+<li>
+<p>Finds the current profile and updates the entries state with its stored entries.</p>
+</li>
+</ul>
+<p><strong>addEntry()</strong></p>
+<ul>
+<li>
+<p>Saves a new entry using the add_entry tauri-command.</p>
+</li>
+<li>
+<p>Reloads the entries after adding the new entry.</p>
+</li>
+</ul>
+<p><strong>deleteEntry()</strong></p>
+<ul>
+<li>
+<p>Removes an entry using the delete_entry tauri-command.</p>
+</li>
+<li>
+<p>Reloads the entries after deletion.</p>
+</li>
+</ul>
+<hr>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_hooks_useVault.jsx.html">components/hooks/useVault.jsx</a>, <a href="components_hooks_useVault.jsx.html#line4">line 4</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddEntry">AddEntry</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#ContextMenu">ContextMenu</a></li><li><a href="global.html#EntryContextMenu">EntryContextMenu</a></li><li><a href="global.html#LogIn">LogIn</a></li><li><a href="global.html#Vault">Vault</a></li><li><a href="global.html#VaultItem">VaultItem</a></li><li><a href="global.html#useVault">useVault</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Jul 13 2026 21:20:28 GMT-0700 (Pacific Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
