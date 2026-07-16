@@ -65,6 +65,52 @@ function AddEntry({ profile }) {
     const [passwordInput, setPasswordInput] = useState("");
     const [statusMessage, setStatusMessage] = useState(""); 
 
+
+const passwordHandler = () => {
+  const password = generatePassword(24);
+  setPasswordInput(password);
+};
+
+
+const generatePassword = (
+  length = 20,
+  options = {
+    uppercase: true,
+    lowercase: true,
+    numbers: true,
+    symbols: true,
+  }
+) => {
+  const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const lower = "abcdefghijklmnopqrstuvwxyz";
+  const nums = "0123456789";
+  const symbols = "!@#$%^&*()-_=+[]{};:,.<>?";
+
+  let charset = "";
+
+  if (options.uppercase) charset += upper;
+  if (options.lowercase) charset += lower;
+  if (options.numbers) charset += nums;
+  if (options.symbols) charset += symbols;
+
+  if (!charset) {
+    throw new Error("No character sets selected");
+  }
+
+  const randomValues = new Uint32Array(length);
+  crypto.getRandomValues(randomValues);
+
+  let password = "";
+
+  for (let i = 0; i < length; i++) {
+    password += charset[randomValues[i] % charset.length];
+  }
+
+  return password;
+};
+
+
+
     async function handleSubmit(event) {
         event.preventDefault();
 
@@ -132,6 +178,7 @@ function AddEntry({ profile }) {
           message="Invalid"
         />
 
+        <button onClick={passwordHandler}>Generate Password</button>
         {/* <Password Generator/> */}
 
       </Form>
