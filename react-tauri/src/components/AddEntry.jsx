@@ -176,6 +176,7 @@ const generatePassword = (
           value={passwordInput}
           onChange={setPasswordInput}
           message="Invalid"
+          autoComplete={false}
         />
 
         <button onClick={passwordHandler}>Generate Password</button>

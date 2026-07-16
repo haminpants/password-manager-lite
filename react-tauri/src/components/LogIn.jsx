@@ -108,6 +108,7 @@ export default function LogIn({ setProfile }) {
           onChange={setProfileNameInput}
           message="Invalid profile or password"
           triggerError={logInAttempts}
+          autoComplete={false}
         />
 
         <InputText
@@ -117,6 +118,7 @@ export default function LogIn({ setProfile }) {
           onChange={setProfilePasswordInput}
           message="Invalid profile or password"
           triggerError={logInAttempts}
+          autoComplete={false}
         />
 
       </Form>
