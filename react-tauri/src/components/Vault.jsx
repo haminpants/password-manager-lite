@@ -5,8 +5,8 @@ import useVault from "./hooks/useVault";
 import VaultItem from "./VaultItem";
 import ContextMenu from "./ContextMenu";
 import EntryContextMenu from "./EntryContextMenu";
+import LogIn from "./LogIn";
 
-// TODO: Add light mode
 // TODO: Allow users to edit entries/vault items
 // TODO: Allow users to Copy Password and Copy Username
 // TODO: Hide passwords, use CSS
@@ -80,6 +80,7 @@ export default function Vault({ profile}) {
   const navigate = useNavigate();
 
   if (!profile) {
+    navigate("/");
     return <p>No profile loaded</p>;
   }
 
@@ -120,18 +121,18 @@ export default function Vault({ profile}) {
     return (
 
       <div className="flex flex-col justify-start h-screen gap-3 mt-24">
-        <h1 className="text-sky-300 text-4xl justify-center text-center">
+        <h1 className="text-(--primary) text-4xl justify-center text-center">
           Vault
         </h1>
 
       {/* Back Navigation and Add Entry Buttons */}
-      <div className="flex w-full justify-between mt-6">
+      <div className="flex w-full justify-between mt-6 p-6">
         <button className=" border-b pt-3  hover:border-(--secondary) hover:text-(--primary)"
           onClick={() => navigate("/")}>
           Back
         </button>
 
-        <button className=" border border-(--text-muted) border-b-4 border-b-(--highlight)  p-3 rounded-sm hover:border-(--secondary) hover:text-(--primary)"
+        <button className=" border border-(--text-muted) border-b-4 border-b-(--highlight)  p-3 rounded-sm hover:border-(--secondary) hover:text-(--primary) shadow"
           onClick={() => navigate("/Vault/AddEntry")}>
           Add Entry
         </button>

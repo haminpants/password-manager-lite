@@ -5,6 +5,7 @@ import LogIn from "./components/LogIn";
 import Vault from "./components/Vault";
 import AddEntry from "./components/AddEntry";
 import AddProfile from "./components/AddProfile";
+import ToggleTheme from "./components/ToggleTheme";
 
 /**
   * @name App
@@ -43,6 +44,9 @@ function App() {
   const [profile, setProfile] = useState(null);
   return (
     <main className="w-full max-w-5xl">
+      <div className="flex justify-end">
+        <ToggleTheme></ToggleTheme>
+      </div>
       <Routes>
         <Route path="/" element={<LogIn setProfile={setProfile} />} />
         <Route path="/AddProfile" element={<AddProfile />} />

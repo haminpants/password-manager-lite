@@ -111,32 +111,32 @@ const generatePassword = (
 
 
 
-    async function handleSubmit(event) {
-        event.preventDefault();
+async function handleSubmit(event) {
+    event.preventDefault();
 
-        if ( !appNameInput.trim() || !usernameInput.trim() || !passwordInput) {
-            setStatusMessage("Please fill all boxes.");
-            return;
-        }
+    if ( !appNameInput.trim() || !usernameInput.trim() || !passwordInput) {
+        setStatusMessage("Please fill all boxes.");
+        return;
+    }
 
-        const newEntry = {
-            id: Date.now(),
-            app: appNameInput,
-            username: usernameInput,
-            password: passwordInput
-        };
+    const newEntry = {
+        id: Date.now(),
+        app: appNameInput,
+        username: usernameInput,
+        password: passwordInput
+    };
 
-        try {
-            await invoke("add_entry", {
-            profileUsername: profile.username,
-            entry: newEntry
-        });
+    try {
+        await invoke("add_entry", {
+        profileUsername: profile.username,
+        entry: newEntry
+    });
 
-            navigate("/Vault");
-        } catch (error) {
-                console.error("Could not add entry:", error);
-        }
-    }   
+        navigate("/Vault");
+    } catch (error) {
+            console.error("Could not add entry:", error);
+    }
+}   
 
 
   return (
@@ -179,8 +179,12 @@ const generatePassword = (
           autoComplete={false}
         />
 
-        <button onClick={passwordHandler}>Generate Password</button>
-        {/* <Password Generator/> */}
+        {/* <Password Generator/> */} 
+        <button 
+          onClick={passwordHandler}
+          className="text-(--text-muted) -mt-6 hover:text-(--secondary) mb-4"
+        >
+          Generate Password</button>
 
       </Form>
 

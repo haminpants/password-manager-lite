@@ -55,7 +55,7 @@ export default function Form({
   return (
     <div className="flex flex-col justify-center items-center gap-1">
 
-      <h1 className="text-sky-300 text-4xl">
+      <h1 className="text-(--primary) text-4xl">
         {title}
       </h1>
 
@@ -67,7 +67,7 @@ export default function Form({
         {children}
 
         <button
-          className="text-sky-300 mr-4 hover:text-sky-700"
+          className="text-(--primary) mr-4 hover:text-(--secondary)"
           type="submit"
         >
           {submitButtonText}

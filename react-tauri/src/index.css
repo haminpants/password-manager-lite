@@ -19,17 +19,17 @@
 }
 
 .light {
-    --bg: hsl(251, 30%, 96%);
-    --bg-dark:   hsl(253, 70%, 85%);
-    --bg-light: hsl(251, 20%, 90%);
-    --text: hsl(251, 20%, 15%);
-    --text-muted: hsl(251, 15%, 40%);
-    --text-more-muted: hsl(258, 27%, 70%);
-    --primary: hsl(197, 100%, 45%);
-    --secondary: hsl(225, 82%, 45%);
-    --gradient: linear-gradient(0deg, var(--bg), var(--bg-light)); 
-    --highlight: hsl(0%,0%,100%);
-
+    --bg: hsl(251, 30%, 89%);
+    --bg-dark: hsl(252, 71%, 93%);
+    --bg-light: hsl(253, 70%, 95%);
+    --text: hsl(258, 27%, 12%);
+    --text-muted: hsl(258, 27%, 20%);
+    --text-more-muted: hsl(258, 27%, 40%);
+    --primary: hsl(275, 69%, 14%);
+    --secondary: hsl(332, 74%, 39%);
+    --gradient: linear-gradient(0deg, var(--bg), var(--bg-light));
+    --highlight: hsl(0, 0%, 0%);
+    --error-color: hsl(332, 74%, 39%);
 }
 
 #root {
@@ -60,6 +60,10 @@ header{
     border-top: 2px solid var(--text); 
     border-radius: 2%;
     box-shadow: 0px 4px 4px #00000030, 0px 12px 12px #00000015;
+}
+
+.shadow {
+      box-shadow: 0px 4px 4px #00000030, 0px 12px 12px #00000015;
 }
 
 
@@ -141,4 +145,17 @@ header{
 }
 
 
+.t-toggle {
+    width: 2.7rem;
+    height: 1.25rem;
+    background: var(--text-more-muted);
+    border-radius: 20px;
+}
 
+.t-toggle-thumb {
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+}
