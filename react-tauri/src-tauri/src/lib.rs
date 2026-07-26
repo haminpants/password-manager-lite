@@ -1,18 +1,20 @@
+use aes_gcm::{
+    aead::{Aead, KeyInit},
+    Aes256Gcm, Nonce,
+};
+use argon2::{
+    password_hash::{PasswordHasher, SaltString},
+    Argon2,
+};
+use base64::{engine::general_purpose::STANDARD, Engine as _};
+use serde::{Deserialize, Serialize};
 use std::fs;
 use tauri::Manager;
-use serde::{Deserialize, Serialize};
-
 // TODO: Add encryption ins save_vault
-// TODO: Add tauri commands edit_entry, copy_entry_username, copyy_entry_password 
-
+// TODO: Add tauri commands edit_entry, copy_entry_username, copyy_entry_password
 #[derive(Serialize, Deserialize)]
 struct EncryptedVault {
-    profiles: Vec<EncryptedProfile>
-}
-
-#[derive(Serialize, Deserialize)]
-struct Vault {
-    profiles: Vec<Profile>,
+    profiles: Vec<EncryptedProfile>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -20,24 +22,22 @@ struct EncryptedProfile {
     username: String,
     ciphertext: String,
     salt: String,
-    nonce: String
+    nonce: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 struct Profile {
     username: String,
-    password: String,
     entries: Vec<Entry>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 struct Entry {
     id: u64,
     app: String,
     username: String,
     password: String,
 }
-
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 
@@ -54,24 +54,13 @@ struct Entry {
 ///
 /// Returns an error string if the vault file cannot be read.
 #[tauri::command]
-fn get_credentials(app: tauri::AppHandle) -> Result<String, String> {
-
-    println!("1. get_credentials called");
-
-    let path = get_vault_path(&app)?;
-
-    println!("2. Vault path: {:?}", path);
-    
-    let data = fs::read_to_string(path)
-        .map_err(|error| {
-            println!("Read error: {}", error);
-            error.to_string()
-        })?;
-
-    println!("4. File contents:");
-    println!("{}", data);
-
-    Ok(data)
+fn get_credentials(
+    app: tauri::AppHandle,
+    username: String,
+    password: String,
+) -> Result<String, String> {
+    let profile = load_profile(&app, &username, &password)?;
+    serde_json::to_string(&profile).map_err(|e| e.to_string())
 }
 
 /// Tauri command used to save a new entry into a user's profile.
@@ -90,24 +79,16 @@ fn get_credentials(app: tauri::AppHandle) -> Result<String, String> {
 /// Returns an error string if the vault cannot be loaded/saved or the profile
 /// is not found.
 #[tauri::command]
-fn add_entry(app: tauri::AppHandle, profile_username: String, entry: Entry) -> Result<(), String> {
+fn add_entry(
+    app: tauri::AppHandle,
+    username: String,
+    password: String,
+    entry: Entry,
+) -> Result<(), String> {
+    let mut profile = load_profile(&app, &username, &password)?;
+    profile.entries.push(entry);
+    save_profile(&app, &profile, &password)?;
 
-    let mut vault = load_vault(&app)?;
-    let profile = vault.profiles
-        .iter_mut()
-        .find(|profile| profile.username == profile_username);
-
-    match profile {
-        Some(profile) => {
-            profile.entries.push(entry);
-        }
-
-        None => {
-            return Err("Profile not found".to_string());
-        }
-    }
-
-    save_vault(&app, &vault)?;
     Ok(())
 }
 
@@ -127,23 +108,16 @@ fn add_entry(app: tauri::AppHandle, profile_username: String, entry: Entry) -> R
 /// Returns an error string if the vault cannot be loaded/saved or the profile
 /// is not found.
 #[tauri::command]
-fn delete_entry(app: tauri::AppHandle, profile_username: String, entry_id: u64) -> Result<(), String> {
-    let mut vault = load_vault(&app)?;
-    let profile = vault.profiles
-        .iter_mut()
-        .find(|profile| profile.username == profile_username);
+fn delete_entry(
+    app: tauri::AppHandle,
+    profile_username: String,
+    profile_password: String,
+    entry_id: u64,
+) -> Result<(), String> {
+    let mut profile = load_profile(&app, &profile_username, &profile_password)?;
+    profile.entries.retain(|entry| entry.id != entry_id);
+    save_profile(&app, &profile, &profile_password)?;
 
-    match profile {
-        Some(profile) => {
-            profile.entries.retain(|entry| entry.id != entry_id);
-        }
-
-        None => {
-            return Err("Profile not found".to_string());
-        }
-    }
-
-    save_vault(&app, &vault)?;
     Ok(())
 }
 
@@ -164,59 +138,161 @@ fn delete_entry(app: tauri::AppHandle, profile_username: String, entry_id: u64) 
 /// Returns an error string if the vault cannot be loaded or saved, or if
 /// a profile with the same username already exists.
 #[tauri::command]
-fn add_profile(
-    app: tauri::AppHandle,
-    username: String,
-    password: String,
-) -> Result<(), String> {
+fn add_profile(app: tauri::AppHandle, username: String, password: String) -> Result<(), String> {
+    let vault = get_encrypted_vault(&app)?;
 
-    let mut vault = load_vault(&app)?;
-
-    let profile_exists = vault.profiles
-        .iter()
-        .any(|profile| profile.username == username);
-
-    if profile_exists {
+    if vault.profiles.iter().any(|p| p.username == username) {
         return Err("Profile already exists".to_string());
     }
 
     let new_profile = Profile {
         username,
-        password,
         entries: vec![],
     };
 
-    vault.profiles.push(new_profile);
-
-    save_vault(&app, &vault)?;
-
+    save_profile(&app, &new_profile, &password)?;
     Ok(())
 }
 
+fn save_profile(app: &tauri::AppHandle, profile: &Profile, password: &str) -> Result<(), String> {
+    let mut vault = get_encrypted_vault(app)?;
 
-fn load_vault(app: &tauri::AppHandle) -> Result<Vault, String> {
-    let path = get_vault_path(app)?;
-    let data = fs::read_to_string(&path)
-        .map_err(|error| error.to_string())?;
-    let vault: Vault = serde_json::from_str(&data)
-        .map_err(|error| error.to_string())?;
+    let plaintext_json = serde_json::to_string(profile).map_err(|e| e.to_string())?;
 
-    Ok(vault)
+    let (ciphertext, salt, nonce) = encrypt_data(&plaintext_json, password)?;
+
+    let updated_enc_profile = EncryptedProfile {
+        username: profile.username.clone(),
+        ciphertext,
+        salt,
+        nonce,
+    };
+
+    if let Some(existing) = vault
+        .profiles
+        .iter_mut()
+        .find(|p| p.username == profile.username)
+    {
+        *existing = updated_enc_profile;
+    } else {
+        vault.profiles.push(updated_enc_profile);
+    }
+
+    save_encrypted_vault(app, &vault)
 }
 
-fn save_vault(app: &tauri::AppHandle, vault: &Vault) -> Result<(), String> {
+fn load_profile(app: &tauri::AppHandle, username: &str, password: &str) -> Result<Profile, String> {
+    let vault = get_encrypted_vault(app)?;
 
-    // add ecncryption here
+    let enc_profile = vault
+        .profiles
+        .iter()
+        .find(|p| p.username == username)
+        .ok_or_else(|| "Profile not found".to_string())?;
 
+    let decrypted_json = decrypt_data(
+        &enc_profile.ciphertext,
+        &enc_profile.salt,
+        &enc_profile.nonce,
+        password,
+    )?;
+
+    serde_json::from_str(&decrypted_json)
+        .map_err(|e| format!("Failed to parse profile data: {}", e))
+}
+
+fn random_bytes<const N: usize>() -> Result<[u8; N], String> {
+    let mut bytes = [0u8; N];
+    getrandom::fill(&mut bytes).map_err(|e| format!("Random generation error: {e}"))?;
+    Ok(bytes)
+}
+
+fn encrypt_data(
+    plaintext: &str,
+    master_password: &str,
+) -> Result<(String, String, String), String> {
+    let salt_raw = random_bytes::<16>()?;
+    let salt = SaltString::encode_b64(&salt_raw).map_err(|e| format!("Salt error: {e}"))?;
+
+    let argon2 = Argon2::default();
+    let password_hash = argon2
+        .hash_password(master_password.as_bytes(), &salt)
+        .map_err(|e| format!("Argon2 error: {e}"))?;
+
+    let key_bytes = password_hash.hash.unwrap();
+
+    let nonce_raw = random_bytes::<12>()?;
+    let nonce = Nonce::from(nonce_raw);
+
+    let cipher =
+        Aes256Gcm::new_from_slice(key_bytes.as_bytes()).map_err(|e| format!("Key error: {e}"))?;
+
+    let ciphertext = cipher
+        .encrypt(&nonce, plaintext.as_bytes())
+        .map_err(|e| format!("Encryption error: {e:?}"))?;
+
+    Ok((
+        STANDARD.encode(ciphertext),
+        salt.as_str().to_string(),
+        STANDARD.encode(nonce_raw),
+    ))
+}
+
+fn decrypt_data(
+    ciphertext_b64: &str,
+    salt_b64: &str,
+    nonce_b64: &str,
+    master_password: &str,
+) -> Result<String, String> {
+    let salt = SaltString::from_b64(salt_b64).map_err(|e| format!("Invalid salt encoding: {e}"))?;
+
+    let argon2 = Argon2::default();
+    let password_hash = argon2
+        .hash_password(master_password.as_bytes(), &salt)
+        .map_err(|e| format!("Argon2 key derivation failed: {e}"))?;
+
+    let key_bytes = password_hash.hash.unwrap();
+
+    let cipher =
+        Aes256Gcm::new_from_slice(key_bytes.as_bytes()).map_err(|e| format!("Key error: {e}"))?;
+
+    let nonce_bytes = STANDARD
+        .decode(nonce_b64)
+        .map_err(|e| format!("Invalid nonce Base64: {e}"))?;
+
+    let ciphertext_bytes = STANDARD
+        .decode(ciphertext_b64)
+        .map_err(|e| format!("Invalid ciphertext Base64: {e}"))?;
+
+    let nonce_array: [u8; 12] = nonce_bytes
+        .try_into()
+        .map_err(|_| "Invalid nonce length: expected 12 bytes".to_string())?;
+
+    let nonce = Nonce::from(nonce_array);
+
+    let plaintext_bytes = cipher
+        .decrypt(&nonce, ciphertext_bytes.as_ref())
+        .map_err(|_| "Decryption failed: Incorrect password or tampered data".to_string())?;
+
+    String::from_utf8(plaintext_bytes)
+        .map_err(|e| format!("Decrypted data is not valid UTF-8: {e}"))
+}
+
+fn get_encrypted_vault(app: &tauri::AppHandle) -> Result<EncryptedVault, String> {
     let path = get_vault_path(app)?;
-    let json = serde_json::to_string_pretty(vault)
-        .map_err(|error| error.to_string())?;
-    fs::write(path, json)
-        .map_err(|error| error.to_string())?;
+    let data = fs::read_to_string(&path).map_err(|error| error.to_string())?;
+
+    serde_json::from_str(&data).map_err(|error| error.to_string())
+}
+
+fn save_encrypted_vault(app: &tauri::AppHandle, vault: &EncryptedVault) -> Result<(), String> {
+    let path = get_vault_path(app)?;
+    let json = serde_json::to_string_pretty(vault).map_err(|error| error.to_string())?;
+
+    fs::write(path, json).map_err(|error| error.to_string())?;
 
     Ok(())
 }
-
 
 /// Returns the location of `vault.json` on the user's device.
 ///
@@ -241,7 +317,6 @@ fn get_vault_path(app: &tauri::AppHandle) -> Result<std::path::PathBuf, String> 
     Ok(path)
 }
 
-
 /// Creates the initial `vault.json` file when the application starts.
 ///
 /// If a vault file already exists, no changes are made.
@@ -253,27 +328,14 @@ fn initialize_vault(app: &tauri::AppHandle) -> Result<(), String> {
     let path = get_vault_path(app)?;
 
     if !path.exists() {
-        println!("Creating vault at: {:?}", path);
-        let default_vault = Vault {
-            profiles: vec![
-                Profile {
-                    username: "1".to_string(),
-                    password: "1".to_string(),
-                    entries: vec![],
-                }
-            ],
-        };
+        if let Some(parent) = path.parent() {
+            fs::create_dir_all(parent).map_err(|error| error.to_string())?;
+        }
 
-        let json = serde_json::to_string_pretty(&default_vault)
-            .map_err(|error| error.to_string())?;
+        let empty_vault = EncryptedVault { profiles: vec![] };
+        let json = serde_json::to_string_pretty(&empty_vault).map_err(|error| error.to_string())?;
 
-        fs::create_dir_all(
-            path.parent().unwrap()
-        )
-        .map_err(|error| error.to_string())?;
-
-        fs::write(path, json)
-            .map_err(|error| error.to_string())?;
+        fs::write(path, json).map_err(|error| error.to_string())?;
     }
 
     Ok(())

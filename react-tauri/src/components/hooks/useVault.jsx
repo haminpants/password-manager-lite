@@ -44,7 +44,7 @@ import { invoke } from "@tauri-apps/api/core";
   * 
   * @param {Object} profile - The currently selected profile used to load and modify vault entries
   */
- 
+
 export default function useVault(profile) {
 
   const [entries, setEntries] = useState([]);
@@ -53,20 +53,18 @@ export default function useVault(profile) {
 
   async function loadEntries() {
     try {
-      const vaultJSON = await invoke("get_credentials");
+      const vaultJSON = await invoke("get_credentials", {
+        username: profile.vault.username,
+        password: profile.master_password
+      });
       const vault = JSON.parse(vaultJSON);
-      const currentProfile = vault.profiles.find(
-        (storedProfile) =>
-          storedProfile.username === profile.username
-      );
 
-      setEntries(currentProfile.entries);
+      setEntries(profile.vault.entries);
 
       console.log("Vault:", vault);
       console.log("Logged in profile:", profile);
-      console.log("Found profile:", currentProfile);
 
-    } catch(error) {
+    } catch (error) {
       console.error("Could not load entries:", error);
     } finally {
       setLoading(false);
@@ -74,13 +72,13 @@ export default function useVault(profile) {
   }
 
   async function addEntry(entry) {
+    await invoke("add_entry", {
+      username: profile.vault.username,
+      password: profile.master_password,
+      entry: newEntry
+    });
 
-      await invoke("add_entry", {
-          profileUsername: profile.username,
-          entry: JSON.stringify(entry)
-      });
-
-      await loadEntries();
+    await loadEntries();
   }
 
   async function deleteEntry(entryId) {
@@ -93,7 +91,7 @@ export default function useVault(profile) {
   }
 
   // need Tauri commands for these first
-  
+
   // async function editEntry (entryId) {
   //   await invoke("delete_entry", {
   //     profileUsername: profile.username,
