@@ -5,10 +5,22 @@ use serde::{Deserialize, Serialize};
 // TODO: Add encryption ins save_vault
 // TODO: Add tauri commands edit_entry, copy_entry_username, copyy_entry_password 
 
+#[derive(Serialize, Deserialize)]
+struct EncryptedVault {
+    profiles: Vec<EncryptedProfile>
+}
 
 #[derive(Serialize, Deserialize)]
 struct Vault {
     profiles: Vec<Profile>,
+}
+
+#[derive(Serialize, Deserialize)]
+struct EncryptedProfile {
+    username: String,
+    ciphertext: String,
+    salt: String,
+    nonce: String
 }
 
 #[derive(Serialize, Deserialize)]
