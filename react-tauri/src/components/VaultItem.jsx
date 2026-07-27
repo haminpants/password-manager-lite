@@ -44,7 +44,7 @@ export default function VaultItem({ entry, deleteEntry, onContextMenu, copyUsern
             <p>{entry.username}</p>
           </div>
           <div className="col-start-2 row-start-2 text-(--text-muted)">
-            <p>{entry.password}</p>
+            <p>************</p>
           </div>
         </div>
       </div>
