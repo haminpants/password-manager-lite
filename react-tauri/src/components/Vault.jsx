@@ -86,7 +86,9 @@ export default function Vault({ profile}) {
 
   const {
     entries,
-    deleteEntry
+    deleteEntry,
+    copyUsername,
+    copyPassword
   } = useVault(profile);
 
   const [menu, setMenu] = useState({
@@ -151,6 +153,8 @@ export default function Vault({ profile}) {
         key={entry.id}
         entry={entry}
         deleteEntry={deleteEntry}
+        copyUsername={copyUsername}
+        copyPassword={copyPassword}
         onContextMenu={handleContextMenu}
         />
       ))}
@@ -167,6 +171,8 @@ export default function Vault({ profile}) {
         <EntryContextMenu
             entryID={menu.entryID}
             deleteEntry={deleteEntry}
+            copyUsername={copyUsername}
+            copyPassword={copyPassword}
             closeMenu={closeMenu}
         />
       </ContextMenu>

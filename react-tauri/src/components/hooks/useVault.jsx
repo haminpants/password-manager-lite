@@ -103,23 +103,26 @@ export default function useVault(profile) {
   //   await loadEntries();
   // }
 
-  // async function copyUsername (entryId) {
-  //   await invoke("copy_entry_username", {
-  //     profileUsername: profile.username,
-  //     entryId
-  //   });
 
-  //   await loadEntries();
-  // }
 
-  //   async function copyPassword (entryId) {
-  //   await invoke("copy_entry_password", {
-  //     profileUsername: profile.username,
-  //     entryId
-  //   });
+  async function copyUsername (entryId) {
+    await invoke("copy_entry_username", {
+      profileUsername: profile.username,
+      entryId
+    });
 
-  //   await loadEntries();
-  // }
+    //await navigator.clipboard.writeText(entry.username);
+    await loadEntries();
+  }
+
+    async function copyPassword (entryId) {
+      await invoke("copy_entry_password", {
+        profileUsername: profile.username,
+        entryId
+      });
+
+    await loadEntries();
+  }
 
   useEffect(() => {
     if (profile) {
@@ -132,6 +135,8 @@ export default function useVault(profile) {
     loading,
     loadEntries,
     addEntry,
-    deleteEntry
+    deleteEntry,
+    copyUsername,
+    copyPassword
   };
 }

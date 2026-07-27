@@ -31,17 +31,31 @@
   * 
   * @param {number} entryID - The ID of the selected entry used for entry actions
   * @param {Function} deleteEntry - Function used to remove an entry from the vault
+  * @param {Function} copyUsername - Function used to copy username from the vault
+  * @param {Function} copyPassword - Function used to copy username from the vault
   * @param {Function} closeMenu - Function used to close the context menu after an action
   */
 
 export default function EntryContextMenu({ 
   entryID, 
   deleteEntry, 
-  closeMenu 
+  closeMenu,
+  copyUsername,
+  copyPassword
 }) {
 
   function handleDelete() {
     deleteEntry(entryID);
+    closeMenu();
+  }
+
+  function handleCopyUsername() {
+    copyUsername(entryID);
+    closeMenu();
+  }
+
+  function handleCopyPassword() {
+    copyPassword(entryID);
     closeMenu();
   }
 
@@ -64,12 +78,14 @@ export default function EntryContextMenu({
 
       <button
         className="block w-full text-left px-4 py-2 hover:bg-gray-500"
+        onClick={handleCopyUsername}
       >
         Copy Username
       </button>
 
       <button
         className="block w-full text-left px-4 py-2 hover:bg-gray-500"
+        onClick={handleCopyPassword}
       >
         Copy Password
       </button>

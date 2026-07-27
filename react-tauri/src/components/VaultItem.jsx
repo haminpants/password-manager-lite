@@ -19,10 +19,12 @@ import ContextMenu from "./ContextMenu";
   * 
   * @param {Object} entry - The vault entry containing the application, username, password, and ID
   * @param {Function} deleteEntry - Function used to delete the selected entry from the vault
+  * @param {Function} copyUsername - Function used to delete the selected entry from the vault
+  * @param {Function} copyPassword - Function used to delete the selected entry from the vault
   * @param {Function} onContextMenu - Function used to open the context menu with the selected entry information
   */
 
-export default function VaultItem({ entry, deleteEntry, onContextMenu  }) {
+export default function VaultItem({ entry, deleteEntry, onContextMenu, copyUsername, copyPassword }) {
   const menuButtonRef = useRef(null);
   return (
     <div className="flex flex-row w-full gap-4 border p-4 card"
