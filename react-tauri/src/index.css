@@ -48,10 +48,10 @@ body {
     /* ui-monospace, uSFMono-Regular, Consolas, monospace; */
 }
 
-header{
-  /* font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif; */
-  /* Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif */
-}
+/*header{
+  //font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif; 
+  //Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif 
+}*/
 
 .card{
     background: var(--gradient);
