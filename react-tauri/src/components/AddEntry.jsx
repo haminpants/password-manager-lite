@@ -183,6 +183,7 @@ async function handleSubmit(event) {
         <button 
           onClick={passwordHandler}
           className="text-(--text-muted) -mt-6 hover:text-(--secondary) mb-4"
+          type="button"
         >
           Generate Password</button>
 
