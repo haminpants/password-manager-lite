@@ -106,21 +106,22 @@ export default function useVault(profile) {
 
 
   async function copyUsername (entryId) {
-    await invoke("copy_entry_username", {
+    var ent = await invoke("get_entry", {
       profileUsername: profile.username,
       entryId
     });
 
-    //await navigator.clipboard.writeText(entry.username);
+    await navigator.clipboard.writeText(ent.username);
     await loadEntries();
   }
 
     async function copyPassword (entryId) {
-      await invoke("copy_entry_password", {
+      var ent = await invoke("get_entry", {
         profileUsername: profile.username,
         entryId
       });
 
+    await navigator.clipboard.writeText(ent.password);
     await loadEntries();
   }
 

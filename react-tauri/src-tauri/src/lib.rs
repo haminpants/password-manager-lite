@@ -18,7 +18,7 @@ struct Profile {
     entries: Vec<Entry>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 struct Entry {
     id: u64,
     app: String,
@@ -133,6 +133,20 @@ fn delete_entry(app: tauri::AppHandle, profile_username: String, entry_id: u64) 
 
     save_vault(&app, &vault)?;
     Ok(())
+}
+
+#[tauri::command]
+fn get_entry(app: tauri::AppHandle, profile_username: String, entry_id: u64) -> Result<Entry, String> {
+    let vault = load_vault(&app)?;
+    let profile = vault.profiles.iter()
+        .find(|p| p.username == profile_username)
+        .ok_or("Profile not found")?;
+
+    let entry = profile.entries
+        .iter().find(|e| e.id == entry_id)
+        .ok_or("Entry not found")?;
+
+    Ok(entry.clone())
 }
 
 /// Tauri command used to create a new profile.
@@ -279,7 +293,8 @@ pub fn run() {
             get_credentials,
             add_entry,
             delete_entry,
-            add_profile
+            add_profile,
+            get_entry
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
