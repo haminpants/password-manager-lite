@@ -88,6 +88,7 @@ fn add_entry(
     let mut profile = load_profile(&app, &username, &password)?;
     profile.entries.push(entry);
     save_profile(&app, &profile, &password)?;
+    println!("Entry Added");
 
     Ok(())
 }
@@ -178,6 +179,7 @@ fn save_profile(app: &tauri::AppHandle, profile: &Profile, password: &str) -> Re
         vault.profiles.push(updated_enc_profile);
     }
 
+    println!("Entry saved");
     save_encrypted_vault(app, &vault)
 }
 

@@ -37,7 +37,7 @@
 export default function EntryContextMenu({ 
   entryID, 
   deleteEntry, 
-  closeMenu 
+  closeMenu
 }) {
 
   function handleDelete() {

@@ -50,8 +50,8 @@ function App() {
       <Routes>
         <Route path="/" element={<LogIn setProfile={setProfile} />} />
         <Route path="/AddProfile" element={<AddProfile />} />
-        <Route path="/Vault" element={<Vault profile={profile} />} />
-        <Route path="/Vault/AddEntry" element={<AddEntry profile={profile} />} />
+        <Route path="/Vault" element={<Vault profile={profile} setProfile={setProfile} />} />
+        <Route path="/Vault/AddEntry" element={<AddEntry profile={profile} setProfile={setProfile}/>} />
       </Routes>
     </main>
   );

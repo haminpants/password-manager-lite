@@ -3,61 +3,60 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useVault from "./hooks/useVault";
 import Form from "./Form";
-import InputText from "./InputText.jsx"
+import InputText from "./InputText.jsx";
 
 // TODO: Add password generator
 
 /**
-  * @name AddEntry
-  * @description
-  * ----
-  * 
-  * ###### Description
-  * - AddEntry is where users create new entries for their vault.
-  * 
-  * - Users arrive to AddEntry from {@link Vault}. 
-  * 
-  * - AddEntry asks for the app, username, and password of the new entry via a submission form. 
-  * 
-  * - AddEntry saves the new entry in the currently selected {@link profile}. 
-  * 
-  * ----
-  * 
-  * 
-  * ###### Impelentation Logic
-  * From Vault, profile is passed as a prop then received in AddEntry:
-  *
-  * Vault:
-  * 
-  *       <AddEntry profile={profile} />
-  * 
-  *  AddEntry:
-  * 
-  *       function AddEntry({ profile })
-  * 
-  * 
-  * The entry form is written with HTML tags.
-  * Upon onSubmit, it calls the function *handleSubmit()*
-  * 
-  * 
-  * 
-  * **handleSubmit()**
-  * 
-  * - Prevents default behaviour of onSubmit.
-  * 
-  * - Creates the object *newEntry* and calls the {@link add_entry} tauri-command.
-  * 
-  * - *add_entry* saves the the entry natively in the device's file system.
-  * 
-  * - Navigates back to Vault.
-  * 
-  * ----
-  * 
-  * @param {Object} profile - The profile currently selected used to link the new entry
-  */
+ * @name AddEntry
+ * @description
+ * ----
+ *
+ * ###### Description
+ * - AddEntry is where users create new entries for their vault.
+ *
+ * - Users arrive to AddEntry from {@link Vault}.
+ *
+ * - AddEntry asks for the app, username, and password of the new entry via a submission form.
+ *
+ * - AddEntry saves the new entry in the currently selected {@link profile}.
+ *
+ * ----
+ *
+ *
+ * ###### Impelentation Logic
+ * From Vault, profile is passed as a prop then received in AddEntry:
+ *
+ * Vault:
+ *
+ *       <AddEntry profile={profile} />
+ *
+ *  AddEntry:
+ *
+ *       function AddEntry({ profile })
+ *
+ *
+ * The entry form is written with HTML tags.
+ * Upon onSubmit, it calls the function *handleSubmit()*
+ *
+ *
+ *
+ * **handleSubmit()**
+ *
+ * - Prevents default behaviour of onSubmit.
+ *
+ * - Creates the object *newEntry* and calls the {@link add_entry} tauri-command.
+ *
+ * - *add_entry* saves the the entry natively in the device's file system.
+ *
+ * - Navigates back to Vault.
+ *
+ * ----
+ *
+ * @param {Object} profile - The profile currently selected used to link the new entry
+ */
 
-function AddEntry({ profile }) {
-
+function AddEntry({ profile, setProfile }) {
   const navigate = useNavigate();
 
   const [appNameInput, setAppNameInput] = useState("");
@@ -65,12 +64,10 @@ function AddEntry({ profile }) {
   const [passwordInput, setPasswordInput] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
 
-
   const passwordHandler = () => {
     const password = generatePassword(24);
     setPasswordInput(password);
   };
-
 
   const generatePassword = (
     length = 20,
@@ -79,7 +76,7 @@ function AddEntry({ profile }) {
       lowercase: true,
       numbers: true,
       symbols: true,
-    }
+    },
   ) => {
     const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const lower = "abcdefghijklmnopqrstuvwxyz";
@@ -109,8 +106,6 @@ function AddEntry({ profile }) {
     return password;
   };
 
-
-
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -123,14 +118,26 @@ function AddEntry({ profile }) {
       id: Date.now(),
       app: appNameInput,
       username: usernameInput,
-      password: passwordInput
+      password: passwordInput,
     };
 
     try {
       await invoke("add_entry", {
         username: profile.vault.username,
         password: profile.master_password,
-        entry: newEntry
+        entry: newEntry,
+      });
+
+      const updatedVault = await invoke("get_credentials", {
+        username: profile.vault.username,
+        password: profile.master_password,
+      });
+
+      console.log("within AddEntry, get credentials invoked")
+
+      setProfile({
+        vault: JSON.parse(updatedVault),
+        master_password: profile.master_password,
       });
 
       navigate("/Vault");
@@ -139,29 +146,22 @@ function AddEntry({ profile }) {
     }
   }
 
-
   return (
     <div>
-
-
       <Form
         title="Add Entry"
         submitButtonText="Add Entry"
         onSubmit={handleSubmit}
         alternateButtonText={"Cancel"}
-        alternateAction={() =>
-          navigate("/Vault")
-        }
+        alternateAction={() => navigate("/Vault")}
         statusMessage={statusMessage}
       >
-
         <InputText
           label="App"
           value={appNameInput}
           onChange={setAppNameInput}
           message="Invalid"
         />
-
 
         <InputText
           label="Username"
@@ -185,10 +185,9 @@ function AddEntry({ profile }) {
           onClick={passwordHandler}
           className="text-(--text-muted) -mt-6 hover:text-(--secondary) mb-4"
         >
-          Generate Password</button>
-
+          Generate Password
+        </button>
       </Form>
-
     </div>
   );
 }

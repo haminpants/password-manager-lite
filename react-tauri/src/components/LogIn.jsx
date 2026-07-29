@@ -71,6 +71,10 @@ export default function LogIn({ setProfile }) {
 
     try {
       setProfile({vault, master_password: profilePasswordInput});
+      console.log("In Log-IN: Profile:", {
+        vault,
+        master_password: profilePasswordInput
+      });
       setMessage("Log-In successful");
       navigate("/Vault");
     } catch (error) {

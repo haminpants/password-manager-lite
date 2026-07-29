@@ -45,10 +45,14 @@ import { invoke } from "@tauri-apps/api/core";
   * @param {Object} profile - The currently selected profile used to load and modify vault entries
   */
 
-export default function useVault(profile) {
+export default function useVault(profile, setProfile) {
 
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  console.log("In useVault profile: ", {
+    profile
+  })
 
 
   async function loadEntries() {
@@ -82,42 +86,28 @@ export default function useVault(profile) {
   }
 
   async function deleteEntry(entryId) {
-    await invoke("delete_entry", {
-      profileUsername: profile.username,
-      entryId
-    });
 
-    await loadEntries();
+  const args = {
+    profileUsername: profile.vault.username,
+    profilePassword: profile.master_password,
+    entryId: entryId
+  };
+
+  console.log("Sending to Rust:", args);
+
+  await invoke("delete_entry", args);
+
+  const updatedVault = await invoke("get_credentials", {
+    username: profile.vault.username,
+    password: profile.master_password
+  });
+
+  setProfile({
+    vault: JSON.parse(updatedVault),
+    master_password: profile.master_password
+  });
+
   }
-
-  // need Tauri commands for these first
-
-  // async function editEntry (entryId) {
-  //   await invoke("delete_entry", {
-  //     profileUsername: profile.username,
-  //     entryId
-  //   });
-
-  //   await loadEntries();
-  // }
-
-  // async function copyUsername (entryId) {
-  //   await invoke("copy_entry_username", {
-  //     profileUsername: profile.username,
-  //     entryId
-  //   });
-
-  //   await loadEntries();
-  // }
-
-  //   async function copyPassword (entryId) {
-  //   await invoke("copy_entry_password", {
-  //     profileUsername: profile.username,
-  //     entryId
-  //   });
-
-  //   await loadEntries();
-  // }
 
   useEffect(() => {
     if (profile) {
