@@ -75,12 +75,13 @@ import LogIn from "./LogIn";
   * @param {Object} profile - The currently selected profile used to load vault entries
   */
 
-export default function Vault({ profile}) {
+export default function Vault({profile, setProfile}) {
 
+  console.log("VAULT PROFILE:", profile);
   const navigate = useNavigate();
 
   if (!profile) {
-    navigate("/");
+    navigate("/"); // Somehow doesn't navigate back to home.
     return <p>No profile loaded</p>;
   }
 
@@ -89,7 +90,11 @@ export default function Vault({ profile}) {
     deleteEntry,
     copyUsername,
     copyPassword
-  } = useVault(profile);
+  } = useVault(profile, setProfile);
+
+  console.log("VAULT ENTRIES:", entries);
+
+
 
   const [menu, setMenu] = useState({
     visible: false,
@@ -158,6 +163,10 @@ export default function Vault({ profile}) {
         onContextMenu={handleContextMenu}
         />
       ))}
+
+      {console.log("Rendering Vault Items:", entries)}
+
+
 
       {/*An app  with a really long name could spill to the username password. 
       Also, because it's component instead of a table, I can't make it responsive unless I do complete redesign, too bad*/}

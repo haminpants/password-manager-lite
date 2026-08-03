@@ -155,12 +155,12 @@ export function InputShake({ children, message, onCancel, triggerError}) {
   };
 
   useEffect(() => {
-    console.log("Called within InputShake")
-    console.log("trigger Error: " + triggerError)
-    if (triggerError > 0) {
-      console.log("trigger Error: " + triggerError)
-      trigger();
-    }
+    // console.log("Called within InputShake")
+    // console.log("trigger Error: " + triggerError)
+    // if (triggerError > 0) {
+    //   console.log("trigger Error: " + triggerError)
+    //   trigger();
+    // }
   }, [triggerError]);
 
   return (

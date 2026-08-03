@@ -63,32 +63,25 @@ export default function LogIn({ setProfile }) {
       return;
     }
 
+    const vaultJSON = await invoke("get_credentials", {
+      username: profileNameInput,
+      password: profilePasswordInput
+    });
+    const vault = JSON.parse(vaultJSON);
+
     try {
-      const vaultJSON = await invoke("get_credentials");
-      const vault = JSON.parse(vaultJSON);
-
-      const matchingProfile = vault.profiles.find(
-        (profile) =>
-          profile.username === profileNameInput &&
-          profile.password === profilePasswordInput
-      );
-
-
-      if (matchingProfile) {
-        setProfile(matchingProfile);
-        setMessage("Log-In successful");
-        navigate("/Vault");
-
-      } else {
-        setMessage("Invalid username or password");
-        setLogInAttempts((prev) => prev + 1);
-      }
-
+      setProfile({vault, master_password: profilePasswordInput});
+      console.log("In Log-IN: Profile:", {
+        vault,
+        master_password: profilePasswordInput
+      });
+      setMessage("Log-In successful");
+      navigate("/Vault");
     } catch (error) {
-      setMessage("Could not load credentials");
+      setMessage("Invalid username or password");
+      setLogInAttempts((prev) => prev + 1);
     }
   };
-
 
   return (
     <div>
