@@ -11,6 +11,9 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use tauri::Manager;
 
+
+// TODO: Add tauri commands edit_entry
+
 #[derive(Serialize, Deserialize)]
 struct EncryptedVault {
     profiles: Vec<EncryptedProfile>,
@@ -56,10 +59,10 @@ struct Entry {
 #[tauri::command]
 fn get_credentials(
     app: tauri::AppHandle,
-    username: String,
-    password: String,
+    profile_username: String,
+    profile_password: String,
 ) -> Result<String, String> {
-    let profile = load_profile(&app, &username, &password)?;
+    let profile = load_profile(&app, &profile_username, &profile_password)?;
     serde_json::to_string(&profile).map_err(|e| e.to_string())
 }
 
@@ -81,13 +84,13 @@ fn get_credentials(
 #[tauri::command]
 fn add_entry(
     app: tauri::AppHandle,
-    username: String,
-    password: String,
+    profile_username: String,
+    profile_password: String,
     entry: Entry,
 ) -> Result<(), String> {
-    let mut profile = load_profile(&app, &username, &password)?;
+    let mut profile = load_profile(&app, &profile_username, &profile_password)?;
     profile.entries.push(entry);
-    save_profile(&app, &profile, &password)?;
+    save_profile(&app, &profile, &profile_password)?;
     println!("Entry Added");
 
     Ok(())
@@ -123,16 +126,17 @@ fn delete_entry(
 }
 
 
-/// Tauri command used to copy selected entry's username and password
+/// Tauri command used to get entry
+/// used in the copy entry's username or password to clipboard feature 
 
 #[tauri::command]
 fn get_entry(
     app: tauri::AppHandle,
     profile_username: String,
-    password: String,
+    profile_password: String,
     entry_id: u64,
 ) -> Result<Entry, String> {
-    let profile = load_profile(&app, &profile_username, &password)?;
+    let profile = load_profile(&app, &profile_username, &profile_password)?;
 
     let entry = profile.entries
         .iter()
@@ -140,6 +144,32 @@ fn get_entry(
         .ok_or("Entry not found")?;
 
     Ok(entry.clone())
+}
+
+/// Edit the selected entry in vault page
+
+
+#[tauri::command]
+fn edit_entry(
+    app: tauri::AppHandle,
+    profile_username: String,
+    profile_password: String,
+    updated_entry: Entry,
+) -> Result<(), String> {
+    println!("EDIT ENTRY NEW COMMAND");
+    
+    let mut profile = load_profile(&app, &profile_username, &profile_password)?;
+
+    let entry = profile.entries
+        .iter_mut()
+        .find(|e| e.id == updated_entry.id)
+        .ok_or("Entry not found")?;
+
+    *entry = updated_entry;
+
+    save_profile(&app, &profile, &profile_password)?;
+
+    Ok(())
 }
 
 /// Tauri command used to create a new profile.
@@ -377,7 +407,8 @@ pub fn run() {
             add_entry,
             delete_entry,
             add_profile,
-            get_entry
+            get_entry,
+            edit_entry
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

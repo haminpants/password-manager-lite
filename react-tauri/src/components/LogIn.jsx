@@ -64,8 +64,8 @@ export default function LogIn({ setProfile }) {
     }
 
     const vaultJSON = await invoke("get_credentials", {
-      username: profileNameInput,
-      password: profilePasswordInput
+      profileUsername: profileNameInput,
+      profilePassword: profilePasswordInput
     });
     const vault = JSON.parse(vaultJSON);
 

@@ -49,15 +49,11 @@ export default function useVault(profile, setProfile) {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  console.log("In useVault profile: ", {
-    profile,
-  });
-
   async function loadEntries() {
     try {
       const vaultJSON = await invoke("get_credentials", {
-        username: profile.vault.username,
-        password: profile.master_password,
+        profileUsername: profile.vault.username,
+        profilePassword: profile.master_password,
       });
       const vault = JSON.parse(vaultJSON);
 
@@ -74,8 +70,8 @@ export default function useVault(profile, setProfile) {
 
   async function addEntry(entry) {
     await invoke("add_entry", {
-      username: profile.vault.username,
-      password: profile.master_password,
+      profileUsername: profile.vault.username,
+      profilePassword: profile.master_password,
       entry: newEntry,
     });
 
@@ -92,8 +88,8 @@ export default function useVault(profile, setProfile) {
     await invoke("delete_entry", args);
 
     const updatedVault = await invoke("get_credentials", {
-      username: profile.vault.username,
-      password: profile.master_password,
+      profileUsername: profile.vault.username,
+      profilePassword: profile.master_password,
     });
 
     setProfile({
@@ -105,9 +101,8 @@ export default function useVault(profile, setProfile) {
   async function copyUsername(entryId) {
     var ent = await invoke("get_entry", {
       profileUsername: profile.vault.username,
-      password: profile.master_password,
+      profilePassword: profile.master_password,
       entryId: entryId,
-      entryId,
     });
 
     await navigator.clipboard.writeText(ent.username);
@@ -118,11 +113,32 @@ export default function useVault(profile, setProfile) {
     var ent = await invoke("get_entry", {
       profileUsername: profile.vault.username,
       password: profile.master_password,
-      entryId: entryId,
-      entryId,
+      entryId: entryId
     });
 
     await navigator.clipboard.writeText(ent.password);
+    await loadEntries();
+  }
+
+
+  async function editEntry(entryID, updatedData) {
+    const entry = await invoke("get_entry", {
+      profileUsername: profile.vault.username,
+      profilePassword: profile.master_password,
+      entryId: entryID
+    });
+
+    const updatedEntry = {
+      ...entry,
+      ...updatedData
+    };
+
+    await invoke("edit_entry", {
+      profileUsername: profile.vault.username,
+      profilePassword: profile.master_password,
+      updatedEntry,
+    });
+
     await loadEntries();
   }
 
@@ -140,5 +156,6 @@ export default function useVault(profile, setProfile) {
     deleteEntry,
     copyUsername,
     copyPassword,
+    editEntry
   };
 }

@@ -1,3 +1,6 @@
+  import { useNavigate } from "react-router-dom";
+import EditEntry from "./EditEntry";
+  
   /**
   * @name EntryContextMenu
   * @description
@@ -41,8 +44,11 @@ export default function EntryContextMenu({
   deleteEntry, 
   closeMenu,
   copyUsername,
-  copyPassword
+  copyPassword,
+  editEntry
 }) {
+
+  const navigate = useNavigate();
 
   function handleDelete() {
     deleteEntry(entryID);
@@ -59,12 +65,17 @@ export default function EntryContextMenu({
     closeMenu();
   }
 
+function handleEditEntry() {
+    navigate(`/Vault/EditEntry/${entryID}`);
+}
+
   return (
     <>
       <hr className="border-(--text) my-1" />
 
       <button
         className="block w-full text-left px-4 py-2 hover:bg-gray-500"
+        onClick={handleEditEntry}
       >
         Edit
       </button>

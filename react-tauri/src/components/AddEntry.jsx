@@ -5,7 +5,6 @@ import useVault from "./hooks/useVault";
 import Form from "./Form";
 import InputText from "./InputText.jsx";
 
-// TODO: Add password generator
 
 /**
  * @name AddEntry
@@ -49,12 +48,15 @@ import InputText from "./InputText.jsx";
  *
  * - *add_entry* saves the the entry natively in the device's file system.
  *
+ * - Update the frontend with the updated vault  
+ * 
  * - Navigates back to Vault.
  *
  * ----
  *
  * @param {Object} profile - The profile currently selected used to link the new entry
- */
+ * @param {Object} setProfile - allows AddEntry to return the updated profile back to Vault.jsx 
+*/
 
 function AddEntry({ profile, setProfile }) {
   const navigate = useNavigate();
@@ -123,14 +125,14 @@ function AddEntry({ profile, setProfile }) {
 
     try {
       await invoke("add_entry", {
-        username: profile.vault.username,
-        password: profile.master_password,
+        profileUsername: profile.vault.username,
+        profilePassword: profile.master_password,
         entry: newEntry,
       });
 
       const updatedVault = await invoke("get_credentials", {
-        username: profile.vault.username,
-        password: profile.master_password,
+        profileUsername: profile.vault.username,
+        profilePassword: profile.master_password,
       });
 
       console.log("within AddEntry, get credentials invoked")

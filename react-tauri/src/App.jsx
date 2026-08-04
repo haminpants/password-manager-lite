@@ -6,6 +6,7 @@ import Vault from "./components/Vault";
 import AddEntry from "./components/AddEntry";
 import AddProfile from "./components/AddProfile";
 import ToggleTheme from "./components/ToggleTheme";
+import EditEntry from "./components/EditEntry";
 
 /**
   * @name App
@@ -52,6 +53,10 @@ function App() {
         <Route path="/AddProfile" element={<AddProfile />} />
         <Route path="/Vault" element={<Vault profile={profile} setProfile={setProfile} />} />
         <Route path="/Vault/AddEntry" element={<AddEntry profile={profile} setProfile={setProfile}/>} />
+        <Route 
+          path="/Vault/EditEntry/:entryID" 
+          element={<EditEntry profile={profile} setProfile={setProfile} />} 
+        />
       </Routes>
     </main>
   );

@@ -8,8 +8,7 @@ import EntryContextMenu from "./EntryContextMenu";
 import LogIn from "./LogIn";
 
 // TODO: Allow users to edit entries/vault items
-// TODO: Allow users to Copy Password and Copy Username
-// TODO: Hide passwords, use CSS
+// TODO: Add button to toggle visible and invisible password
 // TODO: Optional: Sort vaultItem
 // TODO: Optional: Show date
 // TODO: Optional: Search function
@@ -77,7 +76,6 @@ import LogIn from "./LogIn";
 
 export default function Vault({profile, setProfile}) {
 
-  console.log("VAULT PROFILE:", profile);
   const navigate = useNavigate();
 
   if (!profile) {
@@ -89,11 +87,9 @@ export default function Vault({profile, setProfile}) {
     entries,
     deleteEntry,
     copyUsername,
-    copyPassword
+    copyPassword,
+    editEntry
   } = useVault(profile, setProfile);
-
-  console.log("VAULT ENTRIES:", entries);
-
 
 
   const [menu, setMenu] = useState({
@@ -164,7 +160,6 @@ export default function Vault({profile, setProfile}) {
         />
       ))}
 
-      {console.log("Rendering Vault Items:", entries)}
 
 
 
@@ -177,12 +172,13 @@ export default function Vault({profile, setProfile}) {
           y={menu.y}
           onClose={closeMenu}
       >
-        <EntryContextMenu
+      <EntryContextMenu
             entryID={menu.entryID}
             deleteEntry={deleteEntry}
             copyUsername={copyUsername}
             copyPassword={copyPassword}
             closeMenu={closeMenu}
+            editEntry={editEntry}
         />
       </ContextMenu>
 
