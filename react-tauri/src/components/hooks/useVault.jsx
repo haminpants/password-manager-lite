@@ -112,7 +112,7 @@ export default function useVault(profile, setProfile) {
   async function copyPassword(entryId) {
     var ent = await invoke("get_entry", {
       profileUsername: profile.vault.username,
-      password: profile.master_password,
+      profilePassword: profile.master_password,
       entryId: entryId
     });
 
